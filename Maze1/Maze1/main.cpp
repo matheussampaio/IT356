@@ -1,7 +1,7 @@
 /*
  * This is the main file. It sets up the window using sfml and initializes OpenGL extensions using glew
  *
- * We use sfml, an open-source library. SFML has very basic support for guis. There is SFGUI but I have not used it yet. 
+ * We use sfml, an open-source library. SFML has very basic support for guis. There is SFGUI but I have not used it yet.
  * SFML is by no means a full-fledged powerful UI framework, but it is very simple to use, and is cross-platform. But one of the things going for it is speed.
  * Feel free to use and modify this file for every project.
  *
@@ -21,10 +21,10 @@ using namespace std;
 
 /* function prototypes */
 void init();
-void resize(int w,int h);
+void resize(int w, int h);
 void display(sf::RenderWindow *window);
-void processEvent(sf::Event event,sf::RenderWindow& window);
-void drawText(sf::RenderWindow& window,string text,int x,int y);
+void processEvent(sf::Event event, sf::RenderWindow& window);
+void drawText(sf::RenderWindow& window, string text, int x, int y);
 
 View v; //an object to our View class that encapsulates everything that we do.
 sf::Font font;
@@ -36,59 +36,58 @@ int main(int argc, char *argv[])
 {
 	frames = 0;
 	frame_rate = 0;
-    // Request a 32-bits depth buffer when creating the window
-    sf::ContextSettings contextSettings;
-    contextSettings.depthBits = 32;
+	// Request a 32-bits depth buffer when creating the window
+	sf::ContextSettings contextSettings;
+	contextSettings.depthBits = 32;
 	contextSettings.majorVersion = 4;
 	contextSettings.minorVersion = 0;
 
-    // Create the main window
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Hello World", sf::Style::Default, contextSettings);
-	resize(800,600);
-  //  window.setVerticalSyncEnabled(true);
+	// Create the main window
+	sf::RenderWindow window(sf::VideoMode(800, 600), "Maze 1", sf::Style::Default, contextSettings);
+	resize(800, 600);
+	//  window.setVerticalSyncEnabled(true);
 
-    // Make it the active window for OpenGL calls
- 	window.setActive();   
+	// Make it the active window for OpenGL calls
+	window.setActive();
 
-    //glew currently has a bug that causes problems with 4.0. Setting this glew flag is the temporary solution for it
-    glewExperimental = GL_TRUE;
+	//glew currently has a bug that causes problems with 4.0. Setting this glew flag is the temporary solution for it
+	glewExperimental = GL_TRUE;
 
-    //initialize glew which initializes all the OpenGL extensions.
-    if (glewInit()!=GLEW_OK)
-    {
-        cerr << "Unable to initialize GLEW...exiting" << endl;
-        return EXIT_FAILURE;
-    }
+	//initialize glew which initializes all the OpenGL extensions.
+	if (glewInit() != GLEW_OK)
+	{
+		cerr << "Unable to initialize GLEW...exiting" << endl;
+		return EXIT_FAILURE;
+	}
 
-    //initialize stuff. This will likely change with every program.
-    init();
+	//initialize stuff. This will likely change with every program.
+	init();
 
-	
-// Start game loop
-    while (window.isOpen())
-    {
-        // Process events
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-			processEvent(event,window);
 
-        }
+	// Start game loop
+	while (window.isOpen())
+	{
+		// Process events
+		sf::Event event;
+		while (window.pollEvent(event))
+		{
+			processEvent(event, window);
+
+		}
 
 		if (window.isOpen())
 			display(&window);
-    }
+	}
 
-    
 
-    return EXIT_SUCCESS;
+
+	return EXIT_SUCCESS;
 }
 
 /*
  * This will be the function that processes any events
-*/
-
-void processEvent(sf::Event event,sf::RenderWindow& window)
+ */
+void processEvent(sf::Event event, sf::RenderWindow& window)
 {
 	// Close window : exit
 	if (event.type == sf::Event::Closed)
@@ -111,37 +110,34 @@ void processEvent(sf::Event event,sf::RenderWindow& window)
 /*
  * This function helps us to draw text over a part of the window
  */
-
-void drawText(sf::RenderWindow *window,string text,int x,int y)
+void drawText(sf::RenderWindow *window, string text, int x, int y)
 {
 	// Create some text to draw on top of our OpenGL object
-  
-    sf::Text textobj(text, font);
+
+	sf::Text textobj(text, font);
 
 	textobj.setCharacterSize(18);
-    textobj.setColor(sf::Color(255, 255, 255, 255));
-    textobj.setPosition((float)x,(float)y);
-	
+	textobj.setColor(sf::Color(255, 255, 255, 255));
+	textobj.setPosition((float)x, (float)y);
+
 
 	window->pushGLStates();
 	window->resetGLStates();
 	window->draw(textobj);
-    window->popGLStates();
+	window->popGLStates();
 }
-
 
 /*
  * This will be our display function. Whenever glut needs to redraw the window, it will call this function.
  * The name of this function (display) is of no consequence: you can name it whatever you want, so long as the constraints below are obeyed.
  * Thus all your rendering code should be in this function, or should be called from this function.
  *
-*/
-
+ */
 void display(sf::RenderWindow *window)
 {
-	if (frames==0)
+	if (frames == 0)
 		sfclock.restart();
-	
+
 	// Draw using SFML
 	window->pushGLStates();
 	window->resetGLStates();
@@ -149,15 +145,15 @@ void display(sf::RenderWindow *window)
 	window->popGLStates();
 
 	//set up the background color of the window. This does NOT clear the window. Right now it is (0,0,0) which is black
-	glClearColor(0,0,0,0);
-	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); //this command actually clears the window.
+	glClearColor(0, 0, 0, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //this command actually clears the window.
 	glEnable(GL_DEPTH_TEST);
 	v.draw(); //simply delegate to our view class that has all the data and does all the rendering
 
-	if (frames>500)
+	if (frames > 500)
 	{
 		sf::Time t = sfclock.getElapsedTime();
-		frame_rate = frames/t.asSeconds();
+		frame_rate = frames / t.asSeconds();
 		frames = 0;
 	}
 	else
@@ -168,12 +164,12 @@ void display(sf::RenderWindow *window)
 
 	str << "Frame rate " << frame_rate;
 	// Draw some text on top of our OpenGL object
-	drawText(window,str.str(),window->getSize().x-200,50);
-    
+	drawText(window, str.str(), window->getSize().x - 200, 50);
+
 
 	// Finally, display the rendered frame on screen
 	window->display();
-//	cout << "Rendering" << endl;
+	//	cout << "Rendering" << endl;
 }
 
 /*
@@ -182,29 +178,28 @@ void display(sf::RenderWindow *window)
  * This function must take two integers as parameters, the width and height of the resized window in that order
  * This function must return void.
  **/
-void resize(int w,int h)
+void resize(int w, int h)
 {
-    //delegate to our view class.
-    v.resize(w,h);
+	//delegate to our view class.
+	v.resize(w, h);
 
-    //sets the viewport to cover the entire area of the resized window
-    //glViewport(leftx,topy,width,height)
-    glViewport(0,0,w,h);
+	//sets the viewport to cover the entire area of the resized window
+	//glViewport(leftx,topy,width,height)
+	glViewport(0, 0, w, h);
 }
 
 void init()
 {
-    int major,minor;
-    v.getOpenGLVersion(&major,&minor);
+	int major, minor;
+	v.getOpenGLVersion(&major, &minor);
 
-    cout <<"Opengl version supported : "<<major<<"."<<minor<<endl;
-    v.getGLSLVersion(&major,&minor);
-    cout << "GLSL version supported : "<<major<<"."<<minor << endl;
-    //delegate to our view class to do all the initializing
-    v.initialize();
+	cout << "Opengl version supported : " << major << "." << minor << endl;
+	v.getGLSLVersion(&major, &minor);
+	cout << "GLSL version supported : " << major << "." << minor << endl;
+
+	//delegate to our view class to do all the initializing
+	v.initialize();
 
 	if (!font.loadFromFile("resources/sansation.ttf"))
 		return;
-
-	
 }
