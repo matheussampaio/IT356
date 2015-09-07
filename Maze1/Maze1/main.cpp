@@ -8,8 +8,6 @@
  * SFML was written for C++ and opengl was written for C
  * In order to initialize OpenGL extensions to use OpenGL 4, we use glew. This simplifies setting it up for every program.
  **/
-
-
 #include <SFML/Graphics.hpp>
 #include <GL/glew.h>
 #include <SFML/OpenGL.hpp>
@@ -36,6 +34,7 @@ int main(int argc, char *argv[])
 {
 	frames = 0;
 	frame_rate = 0;
+
 	// Request a 32-bits depth buffer when creating the window
 	sf::ContextSettings contextSettings;
 	contextSettings.depthBits = 32;
@@ -45,7 +44,7 @@ int main(int argc, char *argv[])
 	// Create the main window
 	sf::RenderWindow window(sf::VideoMode(800, 600), "Maze 1", sf::Style::Default, contextSettings);
 	resize(800, 600);
-	//  window.setVerticalSyncEnabled(true);
+	//window.setVerticalSyncEnabled(true);
 
 	// Make it the active window for OpenGL calls
 	window.setActive();
@@ -63,7 +62,6 @@ int main(int argc, char *argv[])
 	//initialize stuff. This will likely change with every program.
 	init();
 
-
 	// Start game loop
 	while (window.isOpen())
 	{
@@ -72,14 +70,11 @@ int main(int argc, char *argv[])
 		while (window.pollEvent(event))
 		{
 			processEvent(event, window);
-
 		}
 
 		if (window.isOpen())
 			display(&window);
 	}
-
-
 
 	return EXIT_SUCCESS;
 }

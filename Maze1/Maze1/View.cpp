@@ -3,10 +3,12 @@
 #include <cstdlib>
 #include <fstream>
 #include <vector>
+
 using namespace std;
 
 //glm headers to access various matrix producing functions, like ortho below in resize
 #include <glm/gtc/matrix_transform.hpp>
+
 //the glm header required to convert glm objects into normal float/int pointers expected by OpenGL
 //see value_ptr function below for an example
 #include <glm/gtc/type_ptr.hpp>
@@ -43,13 +45,9 @@ void View::initialize()
 	//call helper function, get the program shader ID if everything went ok.
 	program = createShaders(shaders);
 
-
-
-
 	//use the above program. After this statement, any rendering will use this above program
 	//passing 0 to the function below disables using any shaders
 	glUseProgram(program);
-
 
 	//assuming the program above is compiled and linked correctly, get IDs for all the input variables
 	//that the shader expects our program to provide.
@@ -62,7 +60,6 @@ void View::initialize()
 
 	vPositionLocation = glGetAttribLocation(program, "vPosition");
 	vColorLocation = glGetAttribLocation(program, "vColor");
-
 
 	/*
 	 * Now we setup everything to draw.
@@ -78,7 +75,6 @@ void View::initialize()
 	 * This example is drawing only 2D triangles, which are triangles with z=0 for all vertices.
 	 * The last number of each vertex should be a 1 making it a point and not a direction
 	 **/
-
 	GLfloat vertices[][4] =
 	{
 		{ -0.9f, -0.90f, 0, 1.0f },
@@ -116,6 +112,7 @@ void View::initialize()
 	indices.push_back(0);
 	indices.push_back(1);
 	indices.push_back(2);
+
 	//the second triangle is composed of vertex 3,4,5 in the above arrays
 	indices.push_back(3);
 	indices.push_back(4);
@@ -174,8 +171,6 @@ void View::initialize()
 	 *
 	 */
 
-
-
 	/* we are treating the two triangles as one model, so we need only one VAO
 	 *the function below takes the number of VAO IDS to create and a pointer to an array of GLuints to store these IDs
 	 *this does not allocate any GPU memory, only asks for an IDs.
@@ -183,16 +178,12 @@ void View::initialize()
 	 */
 	glGenVertexArrays(1, &vao);
 
-
-
 	/*
 	 *you may have several VAOs, only one of them can be used at a time.
 	 *You make a VAO current with the function below.
 	 *See http://www.opengl.org/sdk/docs/man3/xhtml/glBindVertexArray.xml
 	 */
 	glBindVertexArray(vao);
-
-
 
 	/*
 	 *now create all the VBOs you need (in this case, 2). Since you bound the VAO above,
@@ -203,9 +194,6 @@ void View::initialize()
 	 */
 
 	glGenBuffers(NumBuffers, vbo);
-
-
-
 
 	/*
 	 *Now we fill the data in these VBOs
@@ -218,8 +206,6 @@ void View::initialize()
 	//starting with the VBO for all the vertex data
 	// See http://www.opengl.org/sdk/docs/man/xhtml/glBindBuffer.xml
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[ArrayBuffer]);
-
-
 
 	/*
 	 *This next function will populate the above VBO. The parameters are as follows:
@@ -244,8 +230,6 @@ void View::initialize()
 	 */
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[IndexBuffer]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint)*indices.size(), &indices[0], GL_STATIC_DRAW);
-
-
 
 	/*
 	 *The vertex data we specified above stores all the data about a vertex together (i.e. position, color)
@@ -306,16 +290,15 @@ void View::initialize()
 	 *Same as above, except that the color of the first vertex starts after the position of the first vertex. Thus the last parameter skips the first position
 	 */
 	glVertexAttribPointer(vColorLocation, 3, GL_FLOAT, GL_FALSE, sizeof(VertexAttribs), BUFFER_OFFSET(4 * sizeof(GLfloat)));
+	
 	//enable this attribute
 	glEnableVertexAttribArray(vColorLocation);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-
 	//unbind the VAO, so that we don't unintentionally change the settings
 	//so at this point, this VAO has two VBOs and two enabled VertexAttribPointers. It is going to remember all of that!
 	glBindVertexArray(0);
-
 
 	glUseProgram(0);
 }
@@ -324,10 +307,10 @@ void View::initialize()
  *Function called from display in main. Should contain or call all the code to draw one screen from scratch
  *entirely.
  */
-
 void View::draw()
 {
 	glUseProgram(program);
+	
 	/*
 	 *We would like to scale up the triangles. We use glm::scale to get the scale matrix.
 	 *We pass this along as the modelview matrix to the shader, which multiplies each incoming vertex's
@@ -335,18 +318,19 @@ void View::draw()
 	 */
 	modelView = glm::scale(glm::mat4(1.0), glm::vec3(100, 200, 200));
 
-
 	/*
 	 *Supply the shader with all the matrices it expects.
 	 *We already have all the pointers for those matrices from "init" above
 	 *The value_ptr creates a copy-by-value of the glm::mat4 into an array of floats as OpenGL expects
 	 */
 	glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(proj));
+	
 	//return;
 	glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, glm::value_ptr(modelView));
 
 	//ready to draw our "model", so simply bind its VAO
 	glBindVertexArray(vao);
+	
 	//  glDrawArrays(GL_TRIANGLES,0,NumVertices);
 	/*
 	 *glDrawElements is a "superpower" command, that actually starts all the drawing.
