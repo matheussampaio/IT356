@@ -11,7 +11,7 @@ class Maze : public sf::Drawable, public sf::Transformable
 {
 public:
 
-	bool init(string filename)
+	bool init(string filename, int screenWidth, int screenHeigth)
 	{
 		load(filename);
 
@@ -19,7 +19,8 @@ public:
 		m_vertices.setPrimitiveType(sf::Lines);
 		m_vertices.resize(mColumns * mRows * 8);
 		
-		int ratio = 20;
+        int ratioHeigth = screenHeigth * 0.98 / mRows;
+        int ratioWidth = screenWidth * 0.98 / mColumns;
 
 		// populate the vertex array, with one quad per tile
 		for (int i = 0; i < mColumns; i++)
@@ -30,20 +31,20 @@ public:
 				sf::Vertex* quad = &m_vertices[(i + j * mColumns) * 8];
 
                 // left
-                quad[0].position = sf::Vector2f(i * ratio, (j + 1) * ratio);
-                quad[1].position = sf::Vector2f(i * ratio, j * ratio);
+                quad[0].position = sf::Vector2f(i * ratioHeigth, (j + 1) * ratioHeigth);
+                quad[1].position = sf::Vector2f(i * ratioHeigth, j * ratioHeigth);
 
 				// upper
-				quad[2].position = sf::Vector2f(i * ratio, j * ratio);
-				quad[3].position = sf::Vector2f((i + 1) * ratio, j * ratio);
+                quad[2].position = sf::Vector2f(i * ratioWidth, j * ratioWidth);
+                quad[3].position = sf::Vector2f((i + 1) * ratioWidth, j * ratioWidth);
 
                 // right
-				quad[4].position = sf::Vector2f((i + 1) * ratio, j * ratio);
-				quad[5].position = sf::Vector2f((i + 1) * ratio, (j + 1) * ratio);
+                quad[4].position = sf::Vector2f((i + 1) * ratioHeigth, j * ratioHeigth);
+                quad[5].position = sf::Vector2f((i + 1) * ratioHeigth, (j + 1) * ratioHeigth);
 
                 // bottom
-				quad[6].position = sf::Vector2f((i + 1) * ratio, (j + 1) * ratio);
-				quad[7].position = sf::Vector2f(i * ratio, (j + 1) * ratio);
+                quad[6].position = sf::Vector2f((i + 1) * ratioWidth, (j + 1) * ratioWidth);
+                quad[7].position = sf::Vector2f(i * ratioWidth, (j + 1) * ratioWidth);
 
                 for (int z = 0; z < 4; z++)
                 {
