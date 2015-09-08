@@ -8,7 +8,7 @@ using namespace std;
 
 void display(sf::RenderWindow *window);
 
-Maze maze("maze-10x10.txt", 800, 800);
+Maze maze("maze-5x10.txt", 800, 800);
 
 int main(int argc, char *argv[])
 {

@@ -47,10 +47,10 @@ class Maze : public sf::Drawable, public sf::Transformable
         infile >> mStartCellRow >> mStartCellColumn >> mEndCellRow >> mEndCellColumn;
 
         mCells.reserve(mRows * mColumns);
-
-        for (int x = 0; x < mColumns; x++)
+        
+        for (int y = 0; y < mRows; y++)
         {
-            for (int y = 0; y < mRows; y++)
+            for (int x = 0; x < mColumns; x++)
             {
                 int tempBitset;
                 infile >> tempBitset;

@@ -17,7 +17,7 @@ class Cell
     sf::Color NOT_WALL_COLOR = sf::Color::Red;
 
     /* Base Coordinates of the Cells */
-    int mY, mX;
+    int mX, mY;
 
     /* Offsets */
     int mLeftOffset, mTopOffset;
@@ -47,20 +47,20 @@ public:
         sf::Vertex* quad = &mVertices[0];
 
         // left
-        quad[0].position = sf::Vector2f(mY * mRatioHeigth, mX * mRatioHeigth);
-        quad[1].position = sf::Vector2f(mY * mRatioHeigth, (mX + 1) * mRatioHeigth);
+        quad[0].position = sf::Vector2f(mX * mRatioHeigth, mY * mRatioHeigth);
+        quad[1].position = sf::Vector2f(mX * mRatioHeigth, (mY + 1) * mRatioHeigth);
 
         // upper
-        quad[2].position = sf::Vector2f(mY * mRatioWidth, mX * mRatioWidth);
-        quad[3].position = sf::Vector2f((mY + 1) * mRatioWidth, mX * mRatioWidth);
+        quad[2].position = sf::Vector2f(mX * mRatioWidth, mY * mRatioWidth);
+        quad[3].position = sf::Vector2f((mX + 1) * mRatioWidth, mY * mRatioWidth);
 
         // right
-        quad[4].position = sf::Vector2f((mY + 1) * mRatioHeigth, mX * mRatioHeigth);
-        quad[5].position = sf::Vector2f((mY + 1) * mRatioHeigth, (mX + 1) * mRatioHeigth);
+        quad[4].position = sf::Vector2f((mX + 1) * mRatioHeigth, mY * mRatioHeigth);
+        quad[5].position = sf::Vector2f((mX + 1) * mRatioHeigth, (mY + 1) * mRatioHeigth);
 
         // bottom
-        quad[6].position = sf::Vector2f((mY + 1) * mRatioWidth, (mX + 1) * mRatioWidth);
-        quad[7].position = sf::Vector2f(mY * mRatioWidth, (mX + 1) * mRatioWidth);
+        quad[6].position = sf::Vector2f((mX + 1) * mRatioWidth, (mY + 1) * mRatioWidth);
+        quad[7].position = sf::Vector2f(mX * mRatioWidth, (mY + 1) * mRatioWidth);
 
     }
 
