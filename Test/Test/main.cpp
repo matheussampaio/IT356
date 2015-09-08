@@ -6,43 +6,41 @@
 
 using namespace std;
 
-void display(sf::RenderWindow *window);
+/* Methods Prototypes */
+void display();
+void processEvent(sf::Event event);
+void processLeftMousePressed(sf::Event event);
+void processLeftMouseReleased(sf::Event event);
 
-Maze maze("maze-5x10.txt", 800, 800);
+/* Maze Instance */
+Maze mMaze("maze-5x10.txt", 800, 800);
+
+/* Define if the screen should be updated. */
+bool mDrawScreen = true;
+
+// create the window
+sf::RenderWindow mWindowInstance(sf::VideoMode(800, 800), "Maze");
 
 int main(int argc, char *argv[])
 {
-    // create the window
-    sf::RenderWindow window(sf::VideoMode(800, 800), "Maze");
-
-    maze.setPosition(10, 10);
-
-    bool update = true;
+    mMaze.setPosition(10, 10);
 
     // run the program as long as the window is open
-    while (window.isOpen())
+    while (mWindowInstance.isOpen())
     {
         // check all the window's events that were triggered since the last iteration of the loop
         sf::Event event;
-        while (window.pollEvent(event))
+        while (mWindowInstance.pollEvent(event))
         {
-            // "close requested" event: we close the window
-            if (event.type == sf::Event::Closed)
-            {
-                window.close();
-            }
-            else if (event.type == sf::Event::Resized)
-            {
-                update = true;
-            }
+            processEvent(event);
         }
 
-        if (update)
+        if (mDrawScreen)
         {
-            update = false;
+            mDrawScreen = false;
 
-            if (window.isOpen()) {
-                display(&window);
+            if (mWindowInstance.isOpen()) {
+                display();
             }
 
         }
@@ -52,13 +50,47 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-void display(sf::RenderWindow *window) {
-
+void display() {
     // clear the window with white color
-    window->clear(sf::Color::White);
+    mWindowInstance.clear(sf::Color::White);
 
-    window->draw(maze);
+    mWindowInstance.draw(mMaze);
 
     // end the current frame
-    window->display();
+    mWindowInstance.display();
+}
+
+void processEvent(sf::Event event)
+{
+    // "close requested" event: we close the window
+    if (event.type == sf::Event::Closed)
+    {
+        mWindowInstance.close();
+    }
+    else if (event.type == sf::Event::Resized)
+    {
+        mDrawScreen = true;
+    }
+    else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
+    {
+        processLeftMousePressed(event);
+    }
+    else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left)
+    {
+        processLeftMouseReleased(event);
+    }
+}
+
+void processLeftMousePressed(sf::Event event)
+{
+    cout << "left mouse button pressed" << endl;
+    std::cout << "mouse x: " << event.mouseButton.x << std::endl;
+    std::cout << "mouse y: " << event.mouseButton.y << std::endl;
+}
+
+void processLeftMouseReleased(sf::Event event)
+{
+    cout << "left mouse button released" << endl;
+    std::cout << "mouse x: " << event.mouseButton.x << std::endl;
+    std::cout << "mouse y: " << event.mouseButton.y << std::endl;
 }
