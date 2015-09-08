@@ -11,12 +11,16 @@ void display();
 void processEvent(sf::Event event);
 void processLeftMousePressed(sf::Event event);
 void processLeftMouseReleased(sf::Event event);
+void processMouseMoved(sf::Event event);
 
 /* Maze Instance */
-Maze mMaze("maze-5x10.txt", 800, 800);
+Maze mMaze("maze-20x20.txt", 800, 800);
 
 /* Define if the screen should be updated. */
 bool mDrawScreen = true;
+
+/* Keep track if the left mouse button is pressed */
+bool mLeftBtnMousePressed = false;
 
 // create the window
 sf::RenderWindow mWindowInstance(sf::VideoMode(800, 800), "Maze");
@@ -67,22 +71,31 @@ void processEvent(sf::Event event)
     {
         mWindowInstance.close();
     }
-    else if (event.type == sf::Event::Resized)
+    
+    if (event.type == sf::Event::Resized)
     {
         mDrawScreen = true;
     }
-    else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
+    
+    if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
     {
         processLeftMousePressed(event);
     }
-    else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left)
+    
+    if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left)
     {
         processLeftMouseReleased(event);
+    }
+    
+    if (event.type == sf::Event::MouseMoved)
+    {
+        processMouseMoved(event);
     }
 }
 
 void processLeftMousePressed(sf::Event event)
 {
+    mLeftBtnMousePressed = true;
     cout << "left mouse button pressed" << endl;
     std::cout << "mouse x: " << event.mouseButton.x << std::endl;
     std::cout << "mouse y: " << event.mouseButton.y << std::endl;
@@ -90,7 +103,17 @@ void processLeftMousePressed(sf::Event event)
 
 void processLeftMouseReleased(sf::Event event)
 {
+    mLeftBtnMousePressed = false;
     cout << "left mouse button released" << endl;
     std::cout << "mouse x: " << event.mouseButton.x << std::endl;
     std::cout << "mouse y: " << event.mouseButton.y << std::endl;
+}
+
+void processMouseMoved(sf::Event event)
+{
+    if (mLeftBtnMousePressed)
+    {
+        std::cout << "mouse x: " << event.mouseMove.x << std::endl;
+        std::cout << "mouse y: " << event.mouseMove.y << std::endl;
+    }
 }
