@@ -18,7 +18,10 @@ public:
         // resize the vertex array to fit the level size
         m_vertices.setPrimitiveType(sf::Lines);
         m_vertices.resize(mColumns * mRows * 8);
-        
+      
+        int leftOffset = screenHeigth * 0.01;
+        int topOffset = screenHeigth * 0.01;
+
         int ratioHeigth = screenHeigth * 0.98 / mRows;
         int ratioWidth = screenWidth * 0.98 / mColumns;
 
@@ -31,26 +34,31 @@ public:
                 sf::Vertex* quad = &m_vertices[(i + j * mColumns) * 8];
 
                 // left
-                quad[0].position = sf::Vector2f(i * ratioHeigth, (j + 1) * ratioHeigth);
-                quad[1].position = sf::Vector2f(i * ratioHeigth, j * ratioHeigth);
+                quad[0].position = sf::Vector2f(i * ratioHeigth + leftOffset, (j + 1) * ratioHeigth + leftOffset);
+                quad[1].position = sf::Vector2f(i * ratioHeigth + leftOffset, j * ratioHeigth + leftOffset);
 
                 // upper
-                quad[2].position = sf::Vector2f(i * ratioWidth, j * ratioWidth);
-                quad[3].position = sf::Vector2f((i + 1) * ratioWidth, j * ratioWidth);
+                quad[2].position = sf::Vector2f(i * ratioWidth + topOffset, j * ratioWidth + topOffset);
+                quad[3].position = sf::Vector2f((i + 1) * ratioWidth + topOffset, j * ratioWidth + topOffset);
 
                 // right
-                quad[4].position = sf::Vector2f((i + 1) * ratioHeigth, j * ratioHeigth);
-                quad[5].position = sf::Vector2f((i + 1) * ratioHeigth, (j + 1) * ratioHeigth);
+                quad[4].position = sf::Vector2f((i + 1) * ratioHeigth + leftOffset, j * ratioHeigth + leftOffset);
+                quad[5].position = sf::Vector2f((i + 1) * ratioHeigth + leftOffset, (j + 1) * ratioHeigth + leftOffset);
 
                 // bottom
-                quad[6].position = sf::Vector2f((i + 1) * ratioWidth, (j + 1) * ratioWidth);
-                quad[7].position = sf::Vector2f(i * ratioWidth, (j + 1) * ratioWidth);
+                quad[6].position = sf::Vector2f((i + 1) * ratioWidth + topOffset, (j + 1) * ratioWidth + topOffset);
+                quad[7].position = sf::Vector2f(i * ratioWidth + topOffset, (j + 1) * ratioWidth + topOffset);
 
                 for (int z = 0; z < 4; z++)
                 {
                     if (mCells[(j * mColumns) + i][3 - z]) {
                         quad[z * 2].color = sf::Color::Black;
                         quad[(z * 2) + 1].color = sf::Color::Black;
+                    }
+                    else
+                    {
+                        quad[z * 2].color = sf::Color::Transparent;
+                        quad[(z * 2) + 1].color = sf::Color::Transparent;
                     }
                 }
             }
