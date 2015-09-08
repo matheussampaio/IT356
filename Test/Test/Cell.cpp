@@ -1,4 +1,3 @@
-#include <iostream>
 #include <bitset>
 
 #include <SFML/Graphics.hpp>
@@ -32,8 +31,9 @@ public:
         mX = x;
         mY = y;
         mWalls = walls;
-        mRatioHeigth = 50; // ratioHeigth;
-        mRatioWidth = 50;// ratioWidth;
+
+        mRatioHeigth = ratioHeigth;
+        mRatioWidth = ratioWidth;
 
         mVertices.setPrimitiveType(sf::Lines);
         mVertices.resize(8);
@@ -47,20 +47,20 @@ public:
         sf::Vertex* quad = &mVertices[0];
 
         // left
-        quad[0].position = sf::Vector2f(mX * mRatioHeigth, mY * mRatioHeigth);
-        quad[1].position = sf::Vector2f(mX * mRatioHeigth, (mY + 1) * mRatioHeigth);
+        quad[0].position = sf::Vector2f(mX * mRatioWidth, mY * mRatioHeigth);
+        quad[1].position = sf::Vector2f(mX * mRatioWidth, (mY + 1) * mRatioHeigth);
 
         // upper
-        quad[2].position = sf::Vector2f(mX * mRatioWidth, mY * mRatioWidth);
-        quad[3].position = sf::Vector2f((mX + 1) * mRatioWidth, mY * mRatioWidth);
+        quad[2].position = sf::Vector2f(mX * mRatioWidth, mY * mRatioHeigth);
+        quad[3].position = sf::Vector2f((mX + 1) * mRatioWidth, mY * mRatioHeigth);
 
         // right
-        quad[4].position = sf::Vector2f((mX + 1) * mRatioHeigth, mY * mRatioHeigth);
-        quad[5].position = sf::Vector2f((mX + 1) * mRatioHeigth, (mY + 1) * mRatioHeigth);
+        quad[4].position = sf::Vector2f((mX + 1) * mRatioWidth, mY * mRatioHeigth);
+        quad[5].position = sf::Vector2f((mX + 1) * mRatioWidth, (mY + 1) * mRatioHeigth);
 
         // bottom
-        quad[6].position = sf::Vector2f((mX + 1) * mRatioWidth, (mY + 1) * mRatioWidth);
-        quad[7].position = sf::Vector2f(mX * mRatioWidth, (mY + 1) * mRatioWidth);
+        quad[6].position = sf::Vector2f((mX + 1) * mRatioWidth, (mY + 1) * mRatioHeigth);
+        quad[7].position = sf::Vector2f(mX * mRatioWidth, (mY + 1) * mRatioHeigth);
 
     }
 

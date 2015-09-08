@@ -1,4 +1,3 @@
-#include <iostream>
 #include <string>
 #include <fstream>
 
@@ -22,7 +21,7 @@ class Maze : public sf::Drawable, public sf::Transformable
     
     /* Ratio constant */
     int mRatioWidth, mRatioHeigth;
-    float RATIO = 0.50;
+    float RATIO = 0.98;
 
     /* Filename */
     string mFilename;
@@ -55,7 +54,6 @@ class Maze : public sf::Drawable, public sf::Transformable
                 int tempBitset;
                 infile >> tempBitset;
 
-                cout << x << " " << y << " " << bitset<4>(tempBitset) << endl;
                 mCells.push_back(Cell(x, y, bitset<4>(tempBitset), mRatioHeigth, mRatioWidth));
             }
         }
