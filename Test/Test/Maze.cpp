@@ -1,93 +1,60 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <bitset>
 
 #include <SFML/Graphics.hpp>
+
+#include "Cell.cpp"
 
 using namespace std;
 
 class Maze : public sf::Drawable, public sf::Transformable
 {
-public:
+    /* Size of the Maze */
+    int mColumns, mRows;
+        
+    /* Positions of the Start and End Cells */
+    int mStartCellRow, mStartCellColumn, mEndCellRow, mEndCellColumn;
 
-    bool init(string filename, int screenWidth, int screenHeigth)
+    /* Offsets */
+    int mLeftOffset, mTopOffset;
+    float OFFSET = 0.01;
+    
+    /* Ratio constant */
+    int mRatioWidth, mRatioHeigth;
+    float RATIO = 0.98;
+
+    /* Filename */
+    string mFilename;
+
+    /* Maze sizes */
+    int mWidth, mHeigth;
+
+    /* Cells */
+    vector<Cell> mCells;
+
+    void loadMaze()
     {
-        load(filename);
-
-        // resize the vertex array to fit the level size
-        m_vertices.setPrimitiveType(sf::Lines);
-        m_vertices.resize(mColumns * mRows * 8);
-      
-        int leftOffset = screenHeigth * 0.01;
-        int topOffset = screenHeigth * 0.01;
-
-        int ratioHeigth = screenHeigth * 0.98 / mRows;
-        int ratioWidth = screenWidth * 0.98 / mColumns;
-
-        // populate the vertex array, with one quad per tile
-        for (int i = 0; i < mColumns; i++)
-        {
-            for (int j = 0; j < mRows; j++)
-            {
-                // get a pointer to the current tile's quad
-                sf::Vertex* quad = &m_vertices[(i + j * mColumns) * 8];
-
-                // left
-                quad[0].position = sf::Vector2f(i * ratioHeigth + leftOffset, (j + 1) * ratioHeigth + leftOffset);
-                quad[1].position = sf::Vector2f(i * ratioHeigth + leftOffset, j * ratioHeigth + leftOffset);
-
-                // upper
-                quad[2].position = sf::Vector2f(i * ratioWidth + topOffset, j * ratioWidth + topOffset);
-                quad[3].position = sf::Vector2f((i + 1) * ratioWidth + topOffset, j * ratioWidth + topOffset);
-
-                // right
-                quad[4].position = sf::Vector2f((i + 1) * ratioHeigth + leftOffset, j * ratioHeigth + leftOffset);
-                quad[5].position = sf::Vector2f((i + 1) * ratioHeigth + leftOffset, (j + 1) * ratioHeigth + leftOffset);
-
-                // bottom
-                quad[6].position = sf::Vector2f((i + 1) * ratioWidth + topOffset, (j + 1) * ratioWidth + topOffset);
-                quad[7].position = sf::Vector2f(i * ratioWidth + topOffset, (j + 1) * ratioWidth + topOffset);
-
-                for (int z = 0; z < 4; z++)
-                {
-                    if (mCells[(j * mColumns) + i][3 - z]) {
-                        quad[z * 2].color = sf::Color::Black;
-                        quad[(z * 2) + 1].color = sf::Color::Black;
-                    }
-                    else
-                    {
-                        quad[z * 2].color = sf::Color::Transparent;
-                        quad[(z * 2) + 1].color = sf::Color::Transparent;
-                    }
-                }
-            }
-        }
-
-        return true;
-    }
-
-private:
-
-    void load(string filename)
-    {
-        ifstream infile(filename);
+        ifstream infile(mFilename);
 
         // Read the number of Columns and Rows
-        infile >> mColumns >> mRows;
+        infile >> mRows >> mColumns;
+
+        updateRatio();
 
         // Read the star and end cells positions
         infile >> mStartCellRow >> mStartCellColumn >> mEndCellRow >> mEndCellColumn;
 
         mCells.reserve(mRows * mColumns);
 
-        for (int i = 0; i < mColumns; i++)
+        for (int x = 0; x < mColumns; x++)
         {
-            for (int j = 0; j < mRows; j++)
+            for (int y = 0; y < mRows; y++)
             {
                 int tempBitset;
                 infile >> tempBitset;
-                mCells.push_back(bitset<4>(tempBitset));
+
+                mCells.push_back(Cell(x, y, bitset<4>(tempBitset), mRatioHeigth, mRatioWidth));
             }
         }
     }
@@ -97,14 +64,24 @@ private:
         // apply the transform
         states.transform *= getTransform();
 
-        // draw the vertex array
-        target.draw(m_vertices, states);
+        for (int i = 0; i < mRows * mColumns; ++i)
+        {
+            mCells[i].draw(target, states);
+        }
     }
 
-    sf::VertexArray m_vertices;
-    
-    int mColumns, mRows, mStartCellRow, mStartCellColumn, mEndCellRow, mEndCellColumn;
+public:
 
-    vector<bitset<4>> mCells;
-    
+    Maze(string filename, int width, int heigth) {
+        mFilename = filename;
+        mWidth = width;
+        mHeigth = heigth;
+
+        loadMaze();
+    }
+
+    void updateRatio() {
+        mRatioWidth = mWidth * RATIO / mColumns;
+        mRatioHeigth = mHeigth * RATIO / mRows;
+    }
 };

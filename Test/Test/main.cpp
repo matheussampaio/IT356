@@ -8,24 +8,16 @@ using namespace std;
 
 void display(sf::RenderWindow *window);
 
-Maze maze;
+Maze maze("maze-3x6.txt", 800, 800);
 
 int main(int argc, char *argv[])
 {
     // create the window
-    sf::RenderWindow window(sf::VideoMode(800, 800), "My window");
+    sf::RenderWindow window(sf::VideoMode(800, 800), "Maze");
 
     // create the tilemap from the level definition
 
-    if (!maze.init("maze-20x20.txt", 800, 800)) 
-    {
-        cerr << "map failed." << endl;
-        return -1;
-    }
-    else {
-        cout << "map loaded." << endl;
-    }
-    
+    maze.setPosition(10, 10);
 
     // run the program as long as the window is open
     while (window.isOpen())
