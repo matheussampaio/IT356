@@ -1,4 +1,5 @@
 #include <bitset>
+#include <iostream>
 
 #include <SFML/Graphics.hpp>
 
@@ -7,13 +8,13 @@ class Cell
 
     /* Bits representing the walls*/
     std::bitset<4> mWalls;
-    
+
     /* Quad Points of the Cells */
     sf::VertexArray mVertices;
 
     /* Color of the wall */
     sf::Color WALL_COLOR = sf::Color::Black;
-    sf::Color NOT_WALL_COLOR = sf::Color::Red;
+    sf::Color NOT_WALL_COLOR = sf::Color::Transparent;
 
     /* Base Coordinates of the Cells */
     int mX, mY;
@@ -23,6 +24,16 @@ class Cell
 
     /* Screen Ratio */
     int mRatioWidth, mRatioHeigth;
+
+    bool isPointInSquare(int pointX, int pointY, int squareX1, int squareY1, int squareX2, int squareY2)
+    {
+        if (squareX1 <= pointX && pointX <= squareX2 && squareY1 <= pointY && pointY <= squareY2)
+        {
+            return true;
+        }
+
+        return false;
+    }
 
 public:
 
@@ -64,6 +75,7 @@ public:
 
     }
 
+    /* Refresh WALL colors */
     void refreshWalls()
     {
         sf::Vertex* quad = &mVertices[0];
@@ -73,19 +85,42 @@ public:
             /* Bits are in reverse order */
             if (mWalls[3 - i])
             {
-                quad[i * 2].color = sf::Color::Black;
-                quad[(i * 2) + 1].color = sf::Color::Black;
+                quad[i * 2].color = WALL_COLOR;
+                quad[(i * 2) + 1].color = WALL_COLOR;
             }
             else
             {
-                quad[i * 2].color = sf::Color::Transparent;
-                quad[(i * 2) + 1].color = sf::Color::Transparent;
+                quad[i * 2].color = NOT_WALL_COLOR;
+                quad[(i * 2) + 1].color = NOT_WALL_COLOR;
             }
         }
+    }
+
+    void update(int x1, int y1, int x2, int y2)
+    {
+        /* check if any vertex are inside of the square */
+        bool leftTopVertexInside = isPointInSquare(mX * mRatioWidth, mY * mRatioHeigth, x1, y1, x2, y2);
+        bool rightTopVertexInside = isPointInSquare((mX + 1) * mRatioWidth, mY * mRatioHeigth, x1, y1, x2, y2);
+        bool rightBottomVertexInside = isPointInSquare((mX + 1) * mRatioWidth, (mY + 1) * mRatioHeigth, x1, y1, x2, y2);
+        bool leftBottomVertexInside = isPointInSquare(mX * mRatioWidth, (mY + 1) * mRatioHeigth, x1, y1, x2, y2);
+
+        /* if any vertex are inside of the square */
+        if (leftTopVertexInside || leftBottomVertexInside || rightTopVertexInside || rightBottomVertexInside)
+        {
+            /* if at least one vertex of the wall is inside of the square,remove THAT wall, otherwise, ADD that wall. */
+            mWalls[3] = !(leftTopVertexInside || leftBottomVertexInside);
+            mWalls[2] = !(rightTopVertexInside || leftTopVertexInside);
+            mWalls[1] = !(rightTopVertexInside || rightBottomVertexInside);
+            mWalls[0] = !(leftBottomVertexInside || rightBottomVertexInside);
+        }
+
+        refreshWalls();
     }
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
         target.draw(mVertices, states);
     }
+
+
 };
