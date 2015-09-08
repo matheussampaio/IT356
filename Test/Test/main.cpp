@@ -8,7 +8,7 @@ using namespace std;
 
 void display(sf::RenderWindow *window);
 
-Maze maze("maze-3x6.txt", 800, 800);
+Maze maze("maze-10x10.txt", 800, 800);
 
 int main(int argc, char *argv[])
 {
@@ -18,10 +18,12 @@ int main(int argc, char *argv[])
     // create the tilemap from the level definition
 
     maze.setPosition(10, 10);
+    
+    bool update = true;
 
     // run the program as long as the window is open
     while (window.isOpen())
-    {
+    {   
         // check all the window's events that were triggered since the last iteration of the loop
         sf::Event event;
         while (window.pollEvent(event))
@@ -31,9 +33,16 @@ int main(int argc, char *argv[])
                 window.close();
         }
 
-        if (window.isOpen()) {
-            display(&window);
+        if (update)
+        {
+            update = false;
+
+            if (window.isOpen()) {
+                display(&window);
+            }
+
         }
+
     }
 
     return 0;
@@ -43,6 +52,7 @@ void display(sf::RenderWindow *window) {
 
     // clear the window with black color
     window->clear(sf::Color::White);
+
 
     window->draw(maze);
 

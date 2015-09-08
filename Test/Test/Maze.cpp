@@ -22,7 +22,7 @@ class Maze : public sf::Drawable, public sf::Transformable
     
     /* Ratio constant */
     int mRatioWidth, mRatioHeigth;
-    float RATIO = 0.98;
+    float RATIO = 0.50;
 
     /* Filename */
     string mFilename;
@@ -38,7 +38,8 @@ class Maze : public sf::Drawable, public sf::Transformable
         ifstream infile(mFilename);
 
         // Read the number of Columns and Rows
-        infile >> mRows >> mColumns;
+        infile >> mRows;
+        infile >> mColumns;
 
         updateRatio();
 
@@ -54,6 +55,7 @@ class Maze : public sf::Drawable, public sf::Transformable
                 int tempBitset;
                 infile >> tempBitset;
 
+                cout << x << " " << y << " " << bitset<4>(tempBitset) << endl;
                 mCells.push_back(Cell(x, y, bitset<4>(tempBitset), mRatioHeigth, mRatioWidth));
             }
         }
