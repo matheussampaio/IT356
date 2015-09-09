@@ -35,6 +35,8 @@ class Maze : public sf::Drawable, public sf::Transformable
     /* Cells */
     std::vector<Cell> mCells;
 
+    bool isBoardWall(int x1, int y1, int x2, int y2);
+
     void loadMaze();
 
     void randomizeSide(int* wallX, int* wallY, int currentX, int currentY, int minX, int minY, int maxX, int maxY);

@@ -20,7 +20,7 @@ void eraseSquare();
 void updateMaze();
 
 /* Maze Instance */
-Maze mMaze("maze-20x20.txt", 800, 800);
+Maze mMaze("maze-edited.txt", 800, 800);
 
 /* Define if the screen should be updated. */
 bool mDrawScreen = true;

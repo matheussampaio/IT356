@@ -8,6 +8,29 @@ Maze::Maze(std::string filename, int width, int heigth) {
     loadMaze();
 }
 
+bool Maze::isBoardWall(int x1, int y1, int x2, int y2)
+{
+    /* is both Xs is 0 or equal to mColumns, is board wall. */
+    if (x1 == 0 && x2 == 0)
+    {
+        return true;
+    }
+    else if (y1 == 0 && y2 == 0)
+    {
+        return true;
+    }
+    else if (x1 == mColumns && x2 == mColumns)
+    {
+        return true;
+    }
+    else if (y1 == mRows && y2 == mRows)
+    {
+        return true;
+    }
+
+    return false;
+}
+
 void Maze::loadMaze()
 {
     std::ifstream infile(mFilename);
@@ -119,21 +142,31 @@ void Maze::removeTwoWalls(std::vector<int> cellsIndex)
         secondY = mCells[cellsIndex[cellsIndex.size() - 1]].getY() + 1;
 
         /* radomize first point of the first wall */
-        randomWallVertex(&firstWallX1, &firstWallY1, firstX, firstY, secondX, secondY);
+        do
+        {
+            randomWallVertex(&firstWallX1, &firstWallY1, firstX, firstY, secondX, secondY);
 
-        /* radomize second point of the first wall and make sure it is diferent from the first point */
-        randomizeSide(&firstWallX2, &firstWallY2, firstWallX1, firstWallY1, firstX, firstY, secondX, secondY);
+            /* radomize second point of the first wall and make sure it is diferent from the first point */
+            randomizeSide(&firstWallX2, &firstWallY2, firstWallX1, firstWallY1, firstX, firstY, secondX, secondY);
+        
+            /* if first wall is BOARD WALL, do it again */
+        } while (isBoardWall(firstWallX1, firstWallY1, firstWallX2, firstWallY2));
 
         do
         {
-            /* randomize first point of the second wall */
-            randomWallVertex(&secondWallX1, &secondWallY1, firstX, firstY, secondX, secondY);
+            do
+            {
+                /* randomize first point of the second wall */
+                randomWallVertex(&secondWallX1, &secondWallY1, firstX, firstY, secondX, secondY);
 
-            /* if it is the same points of the first wall, keep trying */
-        } while ((secondWallX1 == firstWallX1 && secondWallY1 == firstWallY1) || (secondWallX1 == firstWallX2 && secondWallY1 == firstWallY2));
+                /* if it is the same points of the first wall, keep trying */
+            } while ((secondWallX1 == firstWallX1 && secondWallY1 == firstWallY1) || (secondWallX1 == firstWallX2 && secondWallY1 == firstWallY2));
 
-        /* randomize second point of the second wall */
-        randomizeSide(&secondWallX2, &secondWallY2, secondWallX1, secondWallY1, firstX, firstY, secondX, secondY);
+            /* randomize second point of the second wall */
+            randomizeSide(&secondWallX2, &secondWallY2, secondWallX1, secondWallY1, firstX, firstY, secondX, secondY);
+
+        /* if second wall is BOARD WALL, do it again */
+        } while (isBoardWall(secondWallX1, secondWallY1, secondWallX2, secondWallY2));
 
         /* remove both walls */
         for (int i = 0; i < mCells.size(); i++)
