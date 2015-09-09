@@ -121,57 +121,41 @@ public:
         return false;
     }
 
-    int getNumberOfWalls()
+    void removeWall(int x1, int y1, int x2, int y2)
     {
-        int count = 0;
+        sf::Vertex* quad = &mVertices[0];
+
+        int vX1, vY1, vX2, vY2;
+
+        x1 *= mRatioWidth;
+        x2 *= mRatioHeigth;
+
+        y1 *= mRatioHeigth;
+        y2 *= mRatioHeigth;
 
         for (int i = 0; i < 4; i++)
         {
-            if (mWalls[i])
+            vX1 = quad[i * 2].position.x;
+            vY1 = quad[i * 2].position.y;
+
+            vX2 = quad[(i * 2) + 1].position.x;
+            vY2 = quad[(i * 2) + 1].position.y;
+
+            if ((pointIsEqual(x1, y1, vX1, vY1) && pointIsEqual(x2, y2, vX2, vY2)) || (pointIsEqual(x1, y1, vX2, vY2) && pointIsEqual(x2, y2, vX1, vY1)))
             {
-                count++;
+                //quad[i * 2].color = sf::Color::Green;
+                //quad[(i * 2) + 1].color = sf::Color::Green;
+
+                mWalls[3 - i] = 0;
+
+                refreshWalls();
             }
         }
-
-        return count;
     }
 
-    int openOneDoor(int wallNumber)
+    bool pointIsEqual(int x1, int y1, int x2, int y2)
     {
-        //std::cout << "open " << wallNumber << " door on cell " << mX << "," << mY << std::endl;
-
-        //int count = 0;
-        
-        sf::Vertex* quad = &mVertices[0];
-
-        for (int i = 0; i <= 3; i++)
-        {
-            
-            if (mWalls[3 - i])
-            {
-                std::cout << "porta em " << mX << "," << mY << " lado " << 3 - i << std::endl;
-
-                wallNumber--;
-
-                std::cout << "wallNumber: " << wallNumber << std::endl;
-
-                if (wallNumber == 0)
-                {
-                    mWalls[3 - i] = 0;
-                    std::cout << "PORTA ABERTA: " << 3 - i << std::endl;
-                    
-                    quad[i * 2].color = sf::Color::Green;
-                    quad[(i * 2) + 1].color = sf::Color::Green;
-                    
-                    //refreshWalls();
-
-                    return -1;
-                }
-                
-            }
-        }
-
-        return wallNumber;
+        return (x1 == x2 && y1 == y2);
     }
 
     int getX()

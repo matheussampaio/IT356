@@ -65,7 +65,7 @@ class Maze : public sf::Drawable, public sf::Transformable
         mRatioHeigth = mHeigth * RATIO / mRows;
     }
 
-    void openRandomWall(vector<int> cellsIndex)
+    void removeTwoWalls(vector<int> cellsIndex)
     {
         if (cellsIndex.size() > 1)
         {
@@ -81,28 +81,66 @@ class Maze : public sf::Drawable, public sf::Transformable
             secondX = mCells[cellsIndex[cellsIndex.size() - 1]].getX() + 1;
             secondY = mCells[cellsIndex[cellsIndex.size() - 1]].getY() + 1;
 
-            /* radomize first point */
-            firstWallX1 = randomInt(firstX, secondX);
-            firstWallY1 = randomInt(firstY, secondY);
+            /* radomize first point of the first wall */
+            randomWallVertex(&firstWallX1, &firstWallY1, firstX, firstY, secondX, secondY);
 
-            /* radomize second point and make sure it is diferent from the others*/
+            /* radomize second point of the first wall and make sure it is diferent from the first point */
             randomizeSide(&firstWallX2, &firstWallY2, firstWallX1, firstWallY1, firstX, firstY, secondX, secondY);
 
-            
             do
-            {
-                secondWallX1 = randomInt(firstX, secondX);
-                secondWallY1 = randomInt(firstY, secondY);
+            {   
+                /* randomize first point of the second wall */
+                randomWallVertex(&secondWallX1, &secondWallY1, firstX, firstY, secondX, secondY);
 
-                /* if second wall has the same points of any vertex of first wall, randomize again */
+                /* if it is the same points of the first wall, keep trying */
             } while ((secondWallX1 == firstWallX1 && secondWallY1 == firstWallY1) || (secondWallX1 == firstWallX2 && secondWallY1 == firstWallY2));
             
+            /* randomize second point of the second wall */
             randomizeSide(&secondWallX2, &secondWallY2, secondWallX1, secondWallY1, firstX, firstY, secondX, secondY);
 
             cout << firstX << "," << firstY << " - " << secondX << "," << secondY << endl;
             cout << firstWallX1 << "," << firstWallY1 << " --> " << firstWallX2 << "," << firstWallY2 << endl;
             cout << secondWallX1 << "," << secondWallY1 << " --> " << secondWallX2 << "," << secondWallY2 << endl;
+
+            /* remove both walls */
+            for (int i = 0; i < mCells.size(); i++)
+            {
+                mCells[i].removeWall(firstWallX1, firstWallY1, firstWallX2, firstWallY2);
+                mCells[i].removeWall(secondWallX1, secondWallY1, secondWallX2, secondWallY2);
+            }
+
         }
+    }
+
+    void randomWallVertex(int* wallX, int* wallY, int x1, int y1, int x2, int y2)
+    {
+        *wallX = randomInt(x1, x2);
+        *wallY = randomInt(y1, y2);
+        
+        /* I have to keep at least one coord equals to x1, y1, x2 or y2 and radomize the other one */
+        int coord = randomInt(0, 3);
+
+        /* keep x1 */
+        if (coord == 0)
+        {
+            *wallX = x1;
+        }
+        /* keep y1 */
+        else if (coord == 1)
+        {
+            *wallY = y1;
+        }
+        /* keep x2 */
+        else if (coord == 2)
+        {
+            *wallX = x2;
+        }
+        /* keep y2 */
+        else if (coord == 3)
+        {
+            *wallY = y2;
+        }
+
     }
 
     int randomInt(int minNumber, int maxNumber)
@@ -179,7 +217,7 @@ public:
             }
         }
 
-        openRandomWall(updatedCellsIndex);
+        removeTwoWalls(updatedCellsIndex);
     }
 
     void save(string outputName)
