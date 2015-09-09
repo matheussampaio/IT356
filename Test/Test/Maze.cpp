@@ -156,27 +156,29 @@ class Maze : public sf::Drawable, public sf::Transformable
             *wallY = currentY;
 
             /* select side */
-            int side = randomInt(0, 3);
+            int add = randomInt(0, 1);
 
-            /* left */
-            if (side == 0)
+            if (*wallX == minX || *wallX == maxX)
             {
-                *wallX = *wallX - 1;
+                if (add)
+                {
+                    *wallY = *wallY + 1;
+                }
+                else
+                {
+                    *wallY = *wallY - 1;
+                }
             }
-            /* right */
-            else if (side == 1)
+            else
             {
-                *wallX = *wallX + 1;
-            }
-            /* top */
-            else if (side == 2)
-            {
-                *wallY = *wallY - 1;
-            }
-            /* bottom */
-            else if (side == 3)
-            {
-                *wallY = *wallY + 1;
+                if (add)
+                {
+                    *wallX = *wallX + 1;
+                }
+                else
+                {
+                    *wallX = *wallX - 1;
+                }
             }
 
         } while (!(minX <= *wallX && *wallX <= maxX && minY <= *wallY && *wallY <= maxY));
