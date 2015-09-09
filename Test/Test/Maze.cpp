@@ -11,14 +11,14 @@ class Maze : public sf::Drawable, public sf::Transformable
 {
     /* Size of the Maze */
     int mColumns, mRows;
-        
+
     /* Positions of the Start and End Cells */
     int mStartCellRow, mStartCellColumn, mEndCellRow, mEndCellColumn;
 
     /* Offsets */
     int mLeftOffset, mTopOffset;
     float OFFSET = 0.01;
-    
+
     /* Ratio constant */
     int mRatioWidth, mRatioHeigth;
     float RATIO = 0.98;
@@ -46,7 +46,7 @@ class Maze : public sf::Drawable, public sf::Transformable
         infile >> mStartCellRow >> mStartCellColumn >> mEndCellRow >> mEndCellColumn;
 
         mCells.reserve(mRows * mColumns);
-        
+
         for (int y = 0; y < mRows; y++)
         {
             for (int x = 0; x < mColumns; x++)
@@ -57,6 +57,11 @@ class Maze : public sf::Drawable, public sf::Transformable
                 mCells.push_back(Cell(x, y, bitset<4>(tempBitset), mRatioHeigth, mRatioWidth));
             }
         }
+    }
+
+    void updateRatio() {
+        mRatioWidth = mWidth * RATIO / mColumns;
+        mRatioHeigth = mHeigth * RATIO / mRows;
     }
 
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -80,8 +85,12 @@ public:
         loadMaze();
     }
 
-    void updateRatio() {
-        mRatioWidth = mWidth * RATIO / mColumns;
-        mRatioHeigth = mHeigth * RATIO / mRows;
+    void update(int x1, int y1, int x2, int y2)
+    {
+        for (int i = 0; i < mCells.size(); i++)
+        {
+            mCells[i].update(x1, y1, x2, y2);
+        }
     }
+
 };
