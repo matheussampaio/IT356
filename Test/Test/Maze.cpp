@@ -1,5 +1,6 @@
 #include <string>
 #include <fstream>
+#include <stdlib.h>
 
 #include <SFML/Graphics.hpp>
 
@@ -64,6 +65,35 @@ class Maze : public sf::Drawable, public sf::Transformable
         mRatioHeigth = mHeigth * RATIO / mRows;
     }
 
+    void openRandomWall(vector<int> cellsIndex)
+    {
+        if (cellsIndex.size() > 0)
+        {
+            /* count walls in updateds cells */
+            int count = 0;
+
+            for (int i : cellsIndex)
+            {
+                count += mCells[i].getNumberOfWalls();
+            }
+
+            int wallNumber = rand() % count;
+
+            cout << "-------" << endl << "conta " << wallNumber  << " e abre." << endl;
+
+            count = 0;
+            for (int i : cellsIndex)
+            {
+                wallNumber = mCells[i].openOneDoor(wallNumber);
+
+                if (wallNumber <= 0) {
+                    cout << "end" << endl;
+                    return;
+                }
+            }
+        }
+    }
+
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
         // apply the transform
@@ -87,10 +117,25 @@ public:
 
     void update(int x1, int y1, int x2, int y2)
     {
+        int countWalls = 0, countCells = 0, temp = 0;
+
+        vector<int> updatedCellsIndex;
+
         for (int i = 0; i < mCells.size(); i++)
         {
-            mCells[i].update(x1, y1, x2, y2);
+            if (mCells[i].update(x1, y1, x2, y2))
+            {
+                updatedCellsIndex.push_back(i);
+            }
         }
+
+        openRandomWall(updatedCellsIndex);
+        openRandomWall(updatedCellsIndex);
+    }
+
+    void save(string outputName)
+    {
+        cout << "saving maze" << endl;
     }
 
 };

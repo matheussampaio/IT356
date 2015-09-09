@@ -96,7 +96,7 @@ public:
         }
     }
 
-    void update(int x1, int y1, int x2, int y2)
+    bool update(int x1, int y1, int x2, int y2)
     {
         /* check if any vertex are inside of the square */
         bool leftTopVertexInside = isPointInSquare(mX * mRatioWidth, mY * mRatioHeigth, x1, y1, x2, y2);
@@ -112,9 +112,66 @@ public:
             mWalls[2] = !(rightTopVertexInside || leftTopVertexInside);
             mWalls[1] = !(rightTopVertexInside || rightBottomVertexInside);
             mWalls[0] = !(leftBottomVertexInside || rightBottomVertexInside);
+
+            refreshWalls();
+            
+            return true;
         }
 
-        refreshWalls();
+        return false;
+    }
+
+    int getNumberOfWalls()
+    {
+        int count = 0;
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (mWalls[i])
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    int openOneDoor(int wallNumber)
+    {
+        //std::cout << "open " << wallNumber << " door on cell " << mX << "," << mY << std::endl;
+
+        //int count = 0;
+        
+        sf::Vertex* quad = &mVertices[0];
+
+        for (int i = 0; i <= 3; i++)
+        {
+            
+            if (mWalls[3 - i])
+            {
+                std::cout << "porta em " << mX << "," << mY << " lado " << 3 - i << std::endl;
+
+                wallNumber--;
+
+                std::cout << "wallNumber: " << wallNumber << std::endl;
+
+                if (wallNumber == 0)
+                {
+                    mWalls[3 - i] = 0;
+                    std::cout << "PORTA ABERTA: " << 3 - i << std::endl;
+                    
+                    quad[i * 2].color = sf::Color::Green;
+                    quad[(i * 2) + 1].color = sf::Color::Green;
+                    
+                    //refreshWalls();
+
+                    return -1;
+                }
+                
+            }
+        }
+
+        return wallNumber;
     }
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const
