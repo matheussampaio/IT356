@@ -82,9 +82,15 @@
     <ClCompile Include="Cell.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Maze.cpp" />
+    <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="maze-20x20.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Cell.h" />
+    <ClInclude Include="Maze.h" />
+    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
