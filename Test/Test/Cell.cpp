@@ -1,5 +1,6 @@
 #include <bitset>
 #include <iostream>
+#include <cmath>
 
 #include <SFML/Graphics.hpp>
 
@@ -143,9 +144,6 @@ public:
 
             if ((pointIsEqual(x1, y1, vX1, vY1) && pointIsEqual(x2, y2, vX2, vY2)) || (pointIsEqual(x1, y1, vX2, vY2) && pointIsEqual(x2, y2, vX1, vY1)))
             {
-                //quad[i * 2].color = sf::Color::Green;
-                //quad[(i * 2) + 1].color = sf::Color::Green;
-
                 mWalls[3 - i] = 0;
 
                 refreshWalls();
@@ -166,6 +164,21 @@ public:
     int getY()
     {
         return mY;
+    }
+
+    int getWallsInInt()
+    {
+        int wallsInInt = 0;
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (mWalls[3 - i])
+            {
+                wallsInInt += pow(2, 3 - i);
+            }
+        }
+
+        return wallsInInt;
     }
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const
