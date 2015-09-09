@@ -145,7 +145,7 @@ class Maze : public sf::Drawable, public sf::Transformable
 
     int randomInt(int minNumber, int maxNumber)
     {
-        return rand() % (maxNumber + 1) + minNumber;
+        return rand() % (maxNumber + 1 - minNumber) + minNumber;
     }
 
     void randomizeSide(int* wallX, int* wallY, int currentX, int currentY, int minX, int minY, int maxX, int maxY)
