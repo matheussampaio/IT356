@@ -4,7 +4,8 @@
 #include <SFML/Window.hpp>
 #include <SFML/OpenGL.hpp>
 #include <SFML/Graphics.hpp>
-#include "Maze.cpp"
+
+#include "Maze.h"
 
 using namespace std;
 
