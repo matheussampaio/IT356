@@ -67,31 +67,81 @@ class Maze : public sf::Drawable, public sf::Transformable
 
     void openRandomWall(vector<int> cellsIndex)
     {
-        if (cellsIndex.size() > 0)
+        if (cellsIndex.size() > 1)
         {
             /* count walls in updateds cells */
-            int count = 0;
+            int firstX, firstY, secondX, secondY, firstWallX1, firstWallY1, firstWallX2,
+                firstWallY2, secondWallX1, secondWallY1, secondWallX2, secondWallY2;
 
-            for (int i : cellsIndex)
+            /* min coords */
+            firstX = mCells[cellsIndex[0]].getX();
+            firstY = mCells[cellsIndex[0]].getY();
+
+            /* max coords */
+            secondX = mCells[cellsIndex[cellsIndex.size() - 1]].getX() + 1;
+            secondY = mCells[cellsIndex[cellsIndex.size() - 1]].getY() + 1;
+
+            /* radomize first point */
+            firstWallX1 = randomInt(firstX, secondX);
+            firstWallY1 = randomInt(firstY, secondY);
+
+            /* radomize second point and make sure it is diferent from the others*/
+            randomizeSide(&firstWallX2, &firstWallY2, firstWallX1, firstWallY1, firstX, firstY, secondX, secondY);
+
+            
+            do
             {
-                count += mCells[i].getNumberOfWalls();
-            }
+                secondWallX1 = randomInt(firstX, secondX);
+                secondWallY1 = randomInt(firstY, secondY);
 
-            int wallNumber = rand() % count;
+                /* if second wall has the same points of any vertex of first wall, randomize again */
+            } while ((secondWallX1 == firstWallX1 && secondWallY1 == firstWallY1) || (secondWallX1 == firstWallX2 && secondWallY1 == firstWallY2));
+            
+            randomizeSide(&secondWallX2, &secondWallY2, secondWallX1, secondWallY1, firstX, firstY, secondX, secondY);
 
-            cout << "-------" << endl << "conta " << wallNumber  << " e abre." << endl;
-
-            count = 0;
-            for (int i : cellsIndex)
-            {
-                wallNumber = mCells[i].openOneDoor(wallNumber);
-
-                if (wallNumber <= 0) {
-                    cout << "end" << endl;
-                    return;
-                }
-            }
+            cout << firstX << "," << firstY << " - " << secondX << "," << secondY << endl;
+            cout << firstWallX1 << "," << firstWallY1 << " --> " << firstWallX2 << "," << firstWallY2 << endl;
+            cout << secondWallX1 << "," << secondWallY1 << " --> " << secondWallX2 << "," << secondWallY2 << endl;
         }
+    }
+
+    int randomInt(int minNumber, int maxNumber)
+    {
+        return rand() % (maxNumber + 1) + minNumber;
+    }
+
+    void randomizeSide(int* wallX, int* wallY, int currentX, int currentY, int minX, int minY, int maxX, int maxY)
+    {
+        do
+        {
+            *wallX = currentX;
+            *wallY = currentY;
+
+            /* select side */
+            int side = randomInt(0, 3);
+
+            /* left */
+            if (side == 0)
+            {
+                *wallX = *wallX - 1;
+            }
+            /* right */
+            else if (side == 1)
+            {
+                *wallX = *wallX + 1;
+            }
+            /* top */
+            else if (side == 2)
+            {
+                *wallY = *wallY - 1;
+            }
+            /* bottom */
+            else if (side == 3)
+            {
+                *wallY = *wallY + 1;
+            }
+
+        } while (!(minX <= *wallX && *wallX <= maxX && minY <= *wallY && *wallY <= maxY));
     }
 
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -117,7 +167,7 @@ public:
 
     void update(int x1, int y1, int x2, int y2)
     {
-        int countWalls = 0, countCells = 0, temp = 0;
+        int countWalls = 0;
 
         vector<int> updatedCellsIndex;
 
@@ -129,7 +179,6 @@ public:
             }
         }
 
-        openRandomWall(updatedCellsIndex);
         openRandomWall(updatedCellsIndex);
     }
 

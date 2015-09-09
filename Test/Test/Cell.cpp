@@ -174,6 +174,16 @@ public:
         return wallNumber;
     }
 
+    int getX()
+    {
+        return mX;
+    }
+
+    int getY()
+    {
+        return mY;
+    }
+
     void draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
         target.draw(mVertices, states);
