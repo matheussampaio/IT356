@@ -225,6 +225,28 @@ public:
     void save(string outputName)
     {
         cout << "saving maze" << endl;
+        
+        ofstream myfile;
+        
+        myfile.open(outputName);
+
+        myfile << mRows << "\n";
+        myfile << mColumns << "\n";
+
+        myfile << mStartCellRow << " " << mStartCellColumn << " " << mEndCellRow << " " << mEndCellColumn << "\n";
+
+        for (int y = 0; y < mRows; y++)
+        {
+            for (int x = 0; x < mColumns; x++)
+            {
+                
+                myfile << mCells[y * mColumns + x].getWallsInInt() << " ";
+            }
+
+            myfile << "\n";
+        }
+
+        myfile.close();
     }
 
 };
