@@ -1,190 +1,115 @@
-#include <bitset>
-#include <iostream>
-#include <cmath>
+#include "Cell.h"
+#include "Utils.h"
 
-#include <SFML/Graphics.hpp>
-
-class Cell
+Cell::Cell(int x, int y, std::bitset<4> walls, int ratioHeigth, int ratioWidth)
 {
+    mX = x;
+    mY = y;
+    mWalls = walls;
 
-    /* Bits representing the walls*/
-    std::bitset<4> mWalls;
+    mRatioHeigth = ratioHeigth;
+    mRatioWidth = ratioWidth;
 
-    /* Quad Points of the Cells */
-    sf::VertexArray mVertices;
+    mVertices.setPrimitiveType(sf::Lines);
+    mVertices.resize(8);
 
-    /* Color of the wall */
-    sf::Color WALL_COLOR = sf::Color::Black;
-    sf::Color NOT_WALL_COLOR = sf::Color::Transparent;
+    refreshVertices();
+    refreshWalls();
+}
 
-    /* Base Coordinates of the Cells */
-    int mX, mY;
+void Cell::refreshVertices()
+{
+    sf::Vertex* quad = &mVertices[0];
 
-    /* Offsets */
-    int mLeftOffset, mTopOffset;
+    // left
+    quad[0].position = sf::Vector2f(mX * mRatioWidth, mY * mRatioHeigth);
+    quad[1].position = sf::Vector2f(mX * mRatioWidth, (mY + 1) * mRatioHeigth);
 
-    /* Screen Ratio */
-    int mRatioWidth, mRatioHeigth;
+    // upper
+    quad[2].position = sf::Vector2f(mX * mRatioWidth, mY * mRatioHeigth);
+    quad[3].position = sf::Vector2f((mX + 1) * mRatioWidth, mY * mRatioHeigth);
 
-    bool isPointInSquare(int pointX, int pointY, int squareX1, int squareY1, int squareX2, int squareY2)
+    // right
+    quad[4].position = sf::Vector2f((mX + 1) * mRatioWidth, mY * mRatioHeigth);
+    quad[5].position = sf::Vector2f((mX + 1) * mRatioWidth, (mY + 1) * mRatioHeigth);
+
+    // bottom
+    quad[6].position = sf::Vector2f((mX + 1) * mRatioWidth, (mY + 1) * mRatioHeigth);
+    quad[7].position = sf::Vector2f(mX * mRatioWidth, (mY + 1) * mRatioHeigth);
+
+}
+
+/* Refresh WALL colors */
+void Cell::refreshWalls()
+{
+    sf::Vertex* quad = &mVertices[0];
+
+    for (int i = 0; i <= 3; i++)
     {
-        if (squareX1 <= pointX && pointX <= squareX2 && squareY1 <= pointY && pointY <= squareY2)
+        /* Bits are in reverse order */
+        if (mWalls[3 - i])
         {
-            return true;
+            quad[i * 2].color = WALL_COLOR;
+            quad[(i * 2) + 1].color = WALL_COLOR;
         }
-
-        return false;
+        else
+        {
+            quad[i * 2].color = NOT_WALL_COLOR;
+            quad[(i * 2) + 1].color = NOT_WALL_COLOR;
+        }
     }
+}
 
-public:
+bool Cell::update(int x1, int y1, int x2, int y2)
+{
+    /* check if any vertex are inside of the square */
+    bool leftTopVertexInside = Utils::isPointInSquare(mX * mRatioWidth, mY * mRatioHeigth, x1, y1, x2, y2);
+    bool rightTopVertexInside = Utils::isPointInSquare((mX + 1) * mRatioWidth, mY * mRatioHeigth, x1, y1, x2, y2);
+    bool rightBottomVertexInside = Utils::isPointInSquare((mX + 1) * mRatioWidth, (mY + 1) * mRatioHeigth, x1, y1, x2, y2);
+    bool leftBottomVertexInside = Utils::isPointInSquare(mX * mRatioWidth, (mY + 1) * mRatioHeigth, x1, y1, x2, y2);
 
-    Cell(int x, int y, std::bitset<4> walls, int ratioHeigth, int ratioWidth)
+    /* if any vertex are inside of the square */
+    if (leftTopVertexInside || leftBottomVertexInside || rightTopVertexInside || rightBottomVertexInside)
     {
-        mX = x;
-        mY = y;
-        mWalls = walls;
+        /* if at least one vertex of the wall is inside of the square,remove THAT wall, otherwise, ADD that wall. */
+        mWalls[3] = !(leftTopVertexInside || leftBottomVertexInside);
+        mWalls[2] = !(rightTopVertexInside || leftTopVertexInside);
+        mWalls[1] = !(rightTopVertexInside || rightBottomVertexInside);
+        mWalls[0] = !(leftBottomVertexInside || rightBottomVertexInside);
 
-        mRatioHeigth = ratioHeigth;
-        mRatioWidth = ratioWidth;
-
-        mVertices.setPrimitiveType(sf::Lines);
-        mVertices.resize(8);
-
-        refreshVertices();
         refreshWalls();
+
+        return true;
     }
 
-    void refreshVertices()
+    return false;
+}
+
+void Cell::removeWall(int x1, int y1, int x2, int y2)
+{
+    sf::Vertex* quad = &mVertices[0];
+
+    int vX1, vY1, vX2, vY2;
+
+    x1 *= mRatioWidth;
+    x2 *= mRatioHeigth;
+
+    y1 *= mRatioHeigth;
+    y2 *= mRatioHeigth;
+
+    for (int i = 0; i < 4; i++)
     {
-        sf::Vertex* quad = &mVertices[0];
+        vX1 = quad[i * 2].position.x;
+        vY1 = quad[i * 2].position.y;
 
-        // left
-        quad[0].position = sf::Vector2f(mX * mRatioWidth, mY * mRatioHeigth);
-        quad[1].position = sf::Vector2f(mX * mRatioWidth, (mY + 1) * mRatioHeigth);
+        vX2 = quad[(i * 2) + 1].position.x;
+        vY2 = quad[(i * 2) + 1].position.y;
 
-        // upper
-        quad[2].position = sf::Vector2f(mX * mRatioWidth, mY * mRatioHeigth);
-        quad[3].position = sf::Vector2f((mX + 1) * mRatioWidth, mY * mRatioHeigth);
-
-        // right
-        quad[4].position = sf::Vector2f((mX + 1) * mRatioWidth, mY * mRatioHeigth);
-        quad[5].position = sf::Vector2f((mX + 1) * mRatioWidth, (mY + 1) * mRatioHeigth);
-
-        // bottom
-        quad[6].position = sf::Vector2f((mX + 1) * mRatioWidth, (mY + 1) * mRatioHeigth);
-        quad[7].position = sf::Vector2f(mX * mRatioWidth, (mY + 1) * mRatioHeigth);
-
-    }
-
-    /* Refresh WALL colors */
-    void refreshWalls()
-    {
-        sf::Vertex* quad = &mVertices[0];
-
-        for (int i = 0; i <= 3; i++)
+        if ((Utils::isPointEqual(x1, y1, vX1, vY1) && Utils::isPointEqual(x2, y2, vX2, vY2)) || (Utils::isPointEqual(x1, y1, vX2, vY2) && Utils::isPointEqual(x2, y2, vX1, vY1)))
         {
-            /* Bits are in reverse order */
-            if (mWalls[3 - i])
-            {
-                quad[i * 2].color = WALL_COLOR;
-                quad[(i * 2) + 1].color = WALL_COLOR;
-            }
-            else
-            {
-                quad[i * 2].color = NOT_WALL_COLOR;
-                quad[(i * 2) + 1].color = NOT_WALL_COLOR;
-            }
-        }
-    }
-
-    bool update(int x1, int y1, int x2, int y2)
-    {
-        /* check if any vertex are inside of the square */
-        bool leftTopVertexInside = isPointInSquare(mX * mRatioWidth, mY * mRatioHeigth, x1, y1, x2, y2);
-        bool rightTopVertexInside = isPointInSquare((mX + 1) * mRatioWidth, mY * mRatioHeigth, x1, y1, x2, y2);
-        bool rightBottomVertexInside = isPointInSquare((mX + 1) * mRatioWidth, (mY + 1) * mRatioHeigth, x1, y1, x2, y2);
-        bool leftBottomVertexInside = isPointInSquare(mX * mRatioWidth, (mY + 1) * mRatioHeigth, x1, y1, x2, y2);
-
-        /* if any vertex are inside of the square */
-        if (leftTopVertexInside || leftBottomVertexInside || rightTopVertexInside || rightBottomVertexInside)
-        {
-            /* if at least one vertex of the wall is inside of the square,remove THAT wall, otherwise, ADD that wall. */
-            mWalls[3] = !(leftTopVertexInside || leftBottomVertexInside);
-            mWalls[2] = !(rightTopVertexInside || leftTopVertexInside);
-            mWalls[1] = !(rightTopVertexInside || rightBottomVertexInside);
-            mWalls[0] = !(leftBottomVertexInside || rightBottomVertexInside);
+            mWalls[3 - i] = 0;
 
             refreshWalls();
-            
-            return true;
-        }
-
-        return false;
-    }
-
-    void removeWall(int x1, int y1, int x2, int y2)
-    {
-        sf::Vertex* quad = &mVertices[0];
-
-        int vX1, vY1, vX2, vY2;
-
-        x1 *= mRatioWidth;
-        x2 *= mRatioHeigth;
-
-        y1 *= mRatioHeigth;
-        y2 *= mRatioHeigth;
-
-        for (int i = 0; i < 4; i++)
-        {
-            vX1 = quad[i * 2].position.x;
-            vY1 = quad[i * 2].position.y;
-
-            vX2 = quad[(i * 2) + 1].position.x;
-            vY2 = quad[(i * 2) + 1].position.y;
-
-            if ((pointIsEqual(x1, y1, vX1, vY1) && pointIsEqual(x2, y2, vX2, vY2)) || (pointIsEqual(x1, y1, vX2, vY2) && pointIsEqual(x2, y2, vX1, vY1)))
-            {
-                mWalls[3 - i] = 0;
-
-                refreshWalls();
-            }
         }
     }
-
-    bool pointIsEqual(int x1, int y1, int x2, int y2)
-    {
-        return (x1 == x2 && y1 == y2);
-    }
-
-    int getX()
-    {
-        return mX;
-    }
-
-    int getY()
-    {
-        return mY;
-    }
-
-    int getWallsInInt()
-    {
-        int wallsInInt = 0;
-
-        for (int i = 0; i < 4; i++)
-        {
-            if (mWalls[3 - i])
-            {
-                wallsInInt += pow(2, 3 - i);
-            }
-        }
-
-        return wallsInInt;
-    }
-
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const
-    {
-        target.draw(mVertices, states);
-    }
-
-
-};
+}
