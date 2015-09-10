@@ -35,6 +35,8 @@ class Maze : public sf::Drawable, public sf::Transformable
     /* Cells */
     std::vector<Cell> mCells;
 
+    bool isBoardWall(int x1, int y1, int x2, int y2);
+
     void loadMaze();
 
     void randomizeSide(int* wallX, int* wallY, int currentX, int currentY, int minX, int minY, int maxX, int maxY);
@@ -44,6 +46,8 @@ class Maze : public sf::Drawable, public sf::Transformable
     void removeTwoWalls(std::vector<int> cellsIndex);
     
     void updateRatio();
+
+    bool isUpdateValid(int x1, int y1, int x2, int y2);
 
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
@@ -63,6 +67,13 @@ public:
 
     void update(int x1, int y1, int x2, int y2);
 
+    int getRows() { return mRows; };
+
+    int getColumns() { return mColumns; };
+
+    int getRatioWidth() { return mRatioWidth; };
+
+    int getRatioHeigth() { return mRatioHeigth; };
 };
 
 #endif

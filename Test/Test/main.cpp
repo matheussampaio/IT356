@@ -20,7 +20,7 @@ void eraseSquare();
 void updateMaze();
 
 /* Maze Instance */
-Maze mMaze("maze-20x20.txt", 800, 800);
+Maze mMaze("maze-edited.txt", 800, 800);
 
 /* Define if the screen should be updated. */
 bool mDrawScreen = true;
@@ -79,7 +79,7 @@ void processEvent(sf::Event event)
     // "close requested" event: we close the window
     if (event.type == sf::Event::Closed)
     {
-        mMaze.save("maze-edited.txt");
+        mMaze.save("maze-20x20.txt");
 
         mWindowInstance.close();
     }
