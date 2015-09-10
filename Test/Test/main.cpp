@@ -10,13 +10,12 @@
 using namespace std;
 
 /* Methods Prototypes */
-void display();
-void processEvent(sf::Event event);
+void display(sf::RenderWindow *window);
+void processEvent(sf::Event event, sf::RenderWindow &window);
 void processLeftMousePressed(sf::Event event);
 void processLeftMouseReleased(sf::Event event);
 void processMouseMoved(sf::Event event);
-void drawSquare();
-void eraseSquare();
+void drawSquare(sf::RenderWindow *window);
 void updateMaze();
 
 /* Maze Instance */
@@ -32,56 +31,62 @@ bool mLeftBtnMousePressed = false;
 int mLeftBtnStartX, mLeftBtnStartY, mLeftBtnCurrentX, mLeftBtnCurrentY;
 
 // create the window
-sf::RenderWindow mWindowInstance(sf::VideoMode(800, 800), "Maze");
 sf::RectangleShape mSquare;
 
 int main(int argc, char *argv[])
 {
+
+    sf::ContextSettings contextSettings;
+    contextSettings.depthBits = 32;
+    contextSettings.majorVersion = 4;
+    contextSettings.minorVersion = 0;
+
+    sf::RenderWindow window(sf::VideoMode(800, 800), "Maze", sf::Style::Default, contextSettings);
+
     mMaze.setPosition(10, 10);
-    mWindowInstance.setFramerateLimit(30);
+    window.setFramerateLimit(30);
 
     // run the program as long as the window is open
-    while (mWindowInstance.isOpen())
+    while (window.isOpen())
     {
         // check all the window's events that were triggered since the last iteration of the loop
         sf::Event event;
-        while (mWindowInstance.pollEvent(event))
+        while (window.pollEvent(event))
         {
-            processEvent(event);
+            processEvent(event, window);
         }
 
-        if (mWindowInstance.isOpen()) {
-            display();
+        if (window.isOpen()) {
+            display(&window);
         }
     }
 
     return 0;
 }
 
-void display() {
+void display(sf::RenderWindow *window) {
     // clear the window with white color
-    mWindowInstance.clear(sf::Color::White);
+    window->clear(sf::Color::White);
 
-    mWindowInstance.draw(mMaze);
+    window->draw(mMaze);
 
     if (mLeftBtnMousePressed)
     {
-        drawSquare();
+        drawSquare(window);
     }
 
-
     // end the current frame
-    mWindowInstance.display();
+    window->display();
 }
 
-void processEvent(sf::Event event)
+void processEvent(sf::Event event, sf::RenderWindow &window)
 {
     // "close requested" event: we close the window
     if (event.type == sf::Event::Closed)
     {
         mMaze.save("maze-20x20.txt");
 
-        mWindowInstance.close();
+        window.close();
     }
 
     if (event.type == sf::Event::Resized)
@@ -132,7 +137,7 @@ void processMouseMoved(sf::Event event)
     }
 }
 
-void drawSquare()
+void drawSquare(sf::RenderWindow *window)
 {
     //cout << mLeftBtnStartX << "," << mLeftBtnStartY << " - " << mLeftBtnCurrentX << "," << mLeftBtnCurrentY << endl;
 
@@ -153,7 +158,7 @@ void drawSquare()
     lines[4].position = sf::Vector2f(mLeftBtnStartX, mLeftBtnStartY);
     lines[4].color = sf::Color::Red;
 
-    mWindowInstance.draw(lines);
+    window->draw(lines);
 }
 
 void updateMaze()
