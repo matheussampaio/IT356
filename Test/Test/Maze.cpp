@@ -210,15 +210,45 @@ void Maze::save(std::string outputName)
 
 void Maze::update(int x1, int y1, int x2, int y2)
 {
-    std::vector<int> updatedCellsIndex;
-
-    for (int i = 0; i < mCells.size(); i++)
+    if (Maze::isUpdateValid(x1, y1, x2, y2))
     {
-        if (mCells[i].update(x1, y1, x2, y2))
+        std::vector<int> updatedCellsIndex;
+
+        for (int i = 0; i < mCells.size(); i++)
         {
-            updatedCellsIndex.push_back(i);
+            if (mCells[i].update(x1, y1, x2, y2))
+            {
+                updatedCellsIndex.push_back(i);
+            }
         }
+
+        removeTwoWalls(updatedCellsIndex);
+    }
+}
+
+bool Maze::isUpdateValid(int x1, int y1, int x2, int y2)
+{
+    sf::Vector2f position = getPosition();
+
+    if (x1 <= position.x || x2 >= mColumns * mRatioWidth + position.x)
+    {
+        return false;
     }
 
-    removeTwoWalls(updatedCellsIndex);
+    if (x2 <= position.x || x1 >= mColumns * mRatioWidth + position.x)
+    {
+        return false;
+    }
+
+    if (y1 <= position.y || y2 >= mRows * mRatioHeigth + position.y)
+    {
+        return false;
+    }
+
+    if (y2 <= position.y || y1 >= mRows * mRatioHeigth + position.y)
+    {
+        return false;
+    }
+
+    return true;
 }

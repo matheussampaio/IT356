@@ -79,7 +79,7 @@ void processEvent(sf::Event event)
     // "close requested" event: we close the window
     if (event.type == sf::Event::Closed)
     {
-        mMaze.save("maze-edited.txt");
+        mMaze.save("maze-20x20.txt");
 
         mWindowInstance.close();
     }

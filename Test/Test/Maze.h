@@ -47,6 +47,8 @@ class Maze : public sf::Drawable, public sf::Transformable
     
     void updateRatio();
 
+    bool isUpdateValid(int x1, int y1, int x2, int y2);
+
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
         states.transform *= getTransform();
