@@ -65,6 +65,13 @@ public:
 
     void update(int x1, int y1, int x2, int y2);
 
+    int getRows() { return mRows; };
+
+    int getColumns() { return mColumns; };
+
+    int getRatioWidth() { return mRatioWidth; };
+
+    int getRatioHeigth() { return mRatioHeigth; };
 };
 
 #endif

@@ -210,8 +210,6 @@ void Maze::save(std::string outputName)
 
 void Maze::update(int x1, int y1, int x2, int y2)
 {
-    int countWalls = 0;
-
     std::vector<int> updatedCellsIndex;
 
     for (int i = 0; i < mCells.size(); i++)
