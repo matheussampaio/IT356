@@ -1,12 +1,12 @@
 #ifndef MAZE_H
 #define MAZE_H
 
-#include "Cell.h"
-#include "Utils.h"
-
 #include <string>
 #include <fstream>
 #include <stdlib.h>
+
+#include "Cell.h"
+#include "Utils.h"
 
 #include <SFML/Graphics.hpp>
 
