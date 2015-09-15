@@ -3,22 +3,32 @@
 
 class VertexAttribs
 {
+    float mPosition[4]; //x,y,z,w
+    float mColor[3]; //color as r,g,b
+
 public:
-
-    VertexAttribs(GLfloat x, GLfloat y)
+    void setXYZW(GLfloat x, GLfloat y, GLfloat z, GLfloat w)
     {
-        position[0] = x;
-        position[1] = y;
-        position[2] = 0;
-        position[3] = 1;
-
-        color[0] = 0.0f;
-        color[1] = 0.0f;
-        color[2] = 0.0f;
+        mPosition[0] = x;
+        mPosition[1] = y;
+        mPosition[2] = z;
+        mPosition[3] = w;
     }
 
-    float position[4]; //x,y,z,w
-    float color[3]; //color as r,g,b
+    void setColor(GLfloat r, GLfloat g, GLfloat b)
+    {
+        mColor[0] = r;
+        mColor[1] = g;
+        mColor[2] = b;
+    }
+
+    float* getPosition() { return mPosition; };
+    float* getColor() { return mColor; };
+
+    GLfloat getX() { return mPosition[0]; };
+    GLfloat getY() { return mPosition[1]; };
+    GLfloat getZ() { return mPosition[2]; };
+
 };
 
 #endif

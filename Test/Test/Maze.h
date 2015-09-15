@@ -58,12 +58,7 @@ class Maze : public sf::Drawable, public sf::Transformable
 
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
-        states.transform *= getTransform();
 
-        for (int i = 0; i < mRows * mColumns; ++i)
-        {
-            mCells[i].draw(target, states);
-        }
     }
 
 public:

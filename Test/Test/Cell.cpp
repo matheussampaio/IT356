@@ -11,54 +11,19 @@ Cell::Cell(int index, int x, int y, std::bitset<4> walls, int ratioHeigth, int r
     mRatioHeigth = ratioHeigth;
     mRatioWidth = ratioWidth;
 
-    mVertices.setPrimitiveType(sf::Lines);
-    mVertices.resize(8);
+    /* FIXME: Y-axis are reversed, but this should be transform work. */
 
-    refreshVertices();
-    refreshWalls();
-}
+    // left - top : x, y
+    mVertex[0].setXYZW(mX * mRatioWidth, -mY * mRatioHeigth, 0, 1);
 
-void Cell::refreshVertices()
-{
-    sf::Vertex* quad = &mVertices[0];
+    // right - top : x + 1, y
+    mVertex[1].setXYZW((mX + 1) * mRatioWidth, -mY * mRatioHeigth, 0, 1);
 
-    // left
-    quad[0].position = sf::Vector2f(mX * mRatioWidth, mY * mRatioHeigth);
-    quad[1].position = sf::Vector2f(mX * mRatioWidth, (mY + 1) * mRatioHeigth);
+    // right - bottom : x + 1, y + 1
+    mVertex[2].setXYZW((mX + 1) * mRatioWidth, -(mY + 1) * mRatioHeigth, 0, 1);
 
-    // upper
-    quad[2].position = sf::Vector2f(mX * mRatioWidth, mY * mRatioHeigth);
-    quad[3].position = sf::Vector2f((mX + 1) * mRatioWidth, mY * mRatioHeigth);
-
-    // right
-    quad[4].position = sf::Vector2f((mX + 1) * mRatioWidth, mY * mRatioHeigth);
-    quad[5].position = sf::Vector2f((mX + 1) * mRatioWidth, (mY + 1) * mRatioHeigth);
-
-    // bottom
-    quad[6].position = sf::Vector2f((mX + 1) * mRatioWidth, (mY + 1) * mRatioHeigth);
-    quad[7].position = sf::Vector2f(mX * mRatioWidth, (mY + 1) * mRatioHeigth);
-
-}
-
-/* Refresh WALL colors */
-void Cell::refreshWalls()
-{
-    sf::Vertex* quad = &mVertices[0];
-
-    for (int i = 0; i <= 3; i++)
-    {
-        /* Bits are in reverse order */
-        if (mWalls[3 - i])
-        {
-            quad[i * 2].color = WALL_COLOR;
-            quad[(i * 2) + 1].color = WALL_COLOR;
-        }
-        else
-        {
-            quad[i * 2].color = NOT_WALL_COLOR;
-            quad[(i * 2) + 1].color = NOT_WALL_COLOR;
-        }
-    }
+    // left - bottom : x, y + 1
+    mVertex[3].setXYZW(mX * mRatioWidth, -(mY + 1) * mRatioHeigth, 0, 1);
 }
 
 bool Cell::update(int x1, int y1, int x2, int y2)
@@ -78,8 +43,6 @@ bool Cell::update(int x1, int y1, int x2, int y2)
         mWalls[1] = !(rightTopVertexInside || rightBottomVertexInside);
         mWalls[0] = !(leftBottomVertexInside || rightBottomVertexInside);
 
-        refreshWalls();
-
         return true;
     }
 
@@ -88,9 +51,7 @@ bool Cell::update(int x1, int y1, int x2, int y2)
 
 void Cell::removeWall(int x1, int y1, int x2, int y2)
 {
-    sf::Vertex* quad = &mVertices[0];
-
-    int vX1, vY1, vX2, vY2;
+    GLfloat vX1, vY1, vX2, vY2;
 
     x1 *= mRatioWidth;
     x2 *= mRatioHeigth;
@@ -98,19 +59,17 @@ void Cell::removeWall(int x1, int y1, int x2, int y2)
     y1 *= mRatioHeigth;
     y2 *= mRatioHeigth;
 
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i <= 3; i++)
     {
-        vX1 = quad[i * 2].position.x;
-        vY1 = quad[i * 2].position.y;
+        vX1 = mVertex[i].getX();
+        vY1 = mVertex[i].getY();
 
-        vX2 = quad[(i * 2) + 1].position.x;
-        vY2 = quad[(i * 2) + 1].position.y;
+        vX2 = mVertex[(i + 1) % 3].getX();
+        vY2 = mVertex[(i + 1) % 3].getY();
 
         if ((Utils::isPointEqual(x1, y1, vX1, vY1) && Utils::isPointEqual(x2, y2, vX2, vY2)) || (Utils::isPointEqual(x1, y1, vX2, vY2) && Utils::isPointEqual(x2, y2, vX1, vY1)))
         {
             mWalls[3 - i] = 0;
-
-            refreshWalls();
         }
     }
 }
@@ -126,28 +85,28 @@ void Cell::appendVertexIndex(std::vector<GLuint> *vertexIndex) {
     *  3   B   2
     */
 
-    /* left L */
+    /* left wall L */
     if (mWalls[3])
     {
         vertexIndex->push_back(firstIndex);
         vertexIndex->push_back(firstIndex + 3);
     }
 
-    /* top T */
+    /* top wall T */
     if (mWalls[2])
     {
         vertexIndex->push_back(firstIndex);
         vertexIndex->push_back(firstIndex + 1);
     }
 
-    /* right R */
+    /* right wall R */
     if (mWalls[1])
     {
         vertexIndex->push_back(firstIndex + 1);
         vertexIndex->push_back(firstIndex + 2);
     }
 
-    /* bottom */
+    /* bottom wall */
     if (mWalls[0])
     {
         vertexIndex->push_back(firstIndex + 2);
@@ -155,22 +114,17 @@ void Cell::appendVertexIndex(std::vector<GLuint> *vertexIndex) {
     }
 };
 
-void Cell::appendVertexData(std::vector<VertexAttribs> *vertexData) {
+void Cell::appendVertexData(std::vector<VertexAttribs> *vertexData)
+{
+    // left - top : x, y
+    vertexData->push_back(mVertex[0]);
 
-    // 0: x, y
-    VertexAttribs v0(mX * mRatioWidth, - mY * mRatioHeigth);
-    vertexData->push_back(v0);
+    // right - top : x + 1, y
+    vertexData->push_back(mVertex[1]);
 
-    // 1: x + 1, y
-    VertexAttribs v1((mX + 1) * mRatioWidth, - mY * mRatioHeigth);
-    vertexData->push_back(v1);
+    // right - bottom : x + 1, y + 1
+    vertexData->push_back(mVertex[2]);
 
-    // 2: x + 1, y + 1
-    VertexAttribs v2((mX + 1) * mRatioWidth, - (mY + 1) * mRatioHeigth);
-    vertexData->push_back(v2);
-
-    // 3: x, y + 1
-    VertexAttribs v3(mX * mRatioWidth, - (mY + 1) * mRatioHeigth);
-    vertexData->push_back(v3);
-
+    // left - bottom : x, y + 1
+    vertexData->push_back(mVertex[3]);
 };

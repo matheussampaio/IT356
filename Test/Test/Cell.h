@@ -19,13 +19,6 @@ class Cell
     /* Bits representing the walls*/
     std::bitset<4> mWalls;
 
-    /* Quad Points of the Cells */
-    sf::VertexArray mVertices;
-
-    /* Color of the wall */
-    sf::Color WALL_COLOR = sf::Color::Black;
-    sf::Color NOT_WALL_COLOR = sf::Color::Transparent;
-
     /* Base Coordinates of the Cells */
     int mX, mY, mIndex;
 
@@ -35,20 +28,15 @@ class Cell
     /* Screen Ratio */
     int mRatioWidth, mRatioHeigth;
 
+    VertexAttribs mVertex[4];
+
 public:
 
     Cell(int index, int x, int y, std::bitset<4> walls, int ratioHeigth, int ratioWidth);
 
-    void refreshVertices();
-    void refreshWalls();
-
     bool update(int x1, int y1, int x2, int y2);
 
     void removeWall(int x1, int y1, int x2, int y2);
-
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const {
-        target.draw(mVertices, states);
-    };
 
     void appendVertexIndex(std::vector<GLuint> *vertexIndex);
 
