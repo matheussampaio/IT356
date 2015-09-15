@@ -72,25 +72,30 @@ public:
 
     void save(std::string outputName);
 
-    void update(int x1, int y1, int x2, int y2);
-
-
+    bool update(int x1, int y1, int x2, int y2);
 
     /* ACESSORS */
 
-    void getVertexIndex(std::vector<GLuint> *vertexIndex) {
+    std::vector<GLuint> getVertexIndex() {
+        std::vector<GLuint> vertexIndex;
 
         for (int i = 0; i < mCells.size(); i++)
         {
-            mCells[i].appendVertexIndex(vertexIndex);
+            mCells[i].appendVertexIndex(&vertexIndex);
         }
+
+        return vertexIndex;
     };
     
-    void getVertexData(std::vector<VertexAttribs> *vertexdata) {
+    std::vector<VertexAttribs> getVertexData() {
+        std::vector<VertexAttribs> vertexdata;
+
         for (int i = 0; i < mCells.size(); i++)
         {
-            mCells[i].appendVertexData(vertexdata);
+            mCells[i].appendVertexData(&vertexdata);
         }
+
+        return vertexdata;
     };
 
     int getRows() { return mRows; };

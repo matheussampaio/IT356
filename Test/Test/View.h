@@ -63,11 +63,9 @@ public:
 
     void setVertexIndex(vector<GLuint> vertexIndex);
     void setVertexData(vector<VertexAttribs> vertexData);
-    std::vector<GLuint>* getVertexIndexPointer() { return &mVertexIndex; };
-    vector<VertexAttribs>* getVertexDataPointer() { return &mVertexData; };
 
     vector<VertexAttribs> mVertexData;
-
+    vector<GLuint> mVertexIndex;
 
 protected:
     //helper function to compile and link our GLSL shaders
@@ -93,7 +91,6 @@ private:
     //the actual projection and modelview matrices
     glm::mat4 proj, modelView;
 
-    vector<GLuint> mVertexIndex;
 };
 
 #endif // VIEW_H

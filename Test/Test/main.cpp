@@ -90,22 +90,15 @@ int main(int argc, char *argv[])
 }
 
 void display(sf::RenderWindow *window) {
-    // clear the window with white color
-    // Draw using SFML
-    //window->pushGLStates();
-    //window->resetGLStates();
-
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     mView.draw();
 
     if (mLeftBtnMousePressed)
     {
-        //drawSquare(window);
+        drawSquare(window);
     }
     
-    //window->popGLStates();
-
     // end the current frame
     window->display();
 
@@ -175,8 +168,6 @@ void processMouseMoved(sf::Event event)
 
 void drawSquare(sf::RenderWindow *window)
 {
-    //cout << mLeftBtnStartX << "," << mLeftBtnStartY << " - " << mLeftBtnCurrentX << "," << mLeftBtnCurrentY << endl;
-
     sf::VertexArray lines(sf::LinesStrip, 5);
 
     lines[0].position = sf::Vector2f(mLeftBtnStartX, mLeftBtnStartY);
@@ -199,12 +190,17 @@ void drawSquare(sf::RenderWindow *window)
 
 void updateMaze()
 {
-    mMaze.update(
+    bool isUpdated = mMaze.update(
         min(mLeftBtnStartX, mLeftBtnCurrentX),
         min(mLeftBtnStartY, mLeftBtnCurrentY),
         max(mLeftBtnStartX, mLeftBtnCurrentX),
         max(mLeftBtnStartY, mLeftBtnCurrentY)
         );
+
+    if (isUpdated)
+    {
+        mView.setVertexIndex(mMaze.getVertexIndex());
+    }
 }
 
 void resize(int w, int h)
@@ -228,9 +224,8 @@ void init(sf::RenderWindow *window)
 
     mMaze.setPosition(10, 10);
 
-    mMaze.getVertexData(mView.getVertexDataPointer());
-
-    mMaze.getVertexIndex(mView.getVertexIndexPointer());
-
     mView.initialize();
+
+    mView.setVertexData(mMaze.getVertexData());
+    mView.setVertexIndex(mMaze.getVertexIndex());
 }

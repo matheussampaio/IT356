@@ -206,12 +206,18 @@ void Maze::save(std::string outputName)
     }
 
     myfile.close();
+
+    std::cout << "Maze saved: " << outputName << std::endl;
+
 }
 
-void Maze::update(int x1, int y1, int x2, int y2)
+bool Maze::update(int x1, int y1, int x2, int y2)
 {
+
     if (Maze::isUpdateValid(x1, y1, x2, y2))
     {
+        std::printf("Updating maze: %d,%d - %d,%d\n", x1, y1, x2, y2);
+
         std::vector<int> updatedCellsIndex;
 
         for (int i = 0; i < mCells.size(); i++)
@@ -223,7 +229,13 @@ void Maze::update(int x1, int y1, int x2, int y2)
         }
 
         removeTwoWalls(updatedCellsIndex);
+
+        return true;
     }
+
+    std::printf("Ignoring updating maze: %d,%d - %d,%d\n", x1, y1, x2, y2);
+
+    return false;
 }
 
 bool Maze::isUpdateValid(int x1, int y1, int x2, int y2)
