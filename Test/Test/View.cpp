@@ -28,7 +28,7 @@ void View::resize(int w, int h)
     *This program uses orthographic projection. The corresponding matrix for this projection is provided by the glm function below.
     */
 
-    proj = glm::ortho(-10.0f, WINDOW_WIDTH - 10.0f, -10.0f, WINDOW_HEIGHT - 10.0f);
+    proj = glm::ortho(-10.0f, WINDOW_WIDTH - 10.0f, -WINDOW_HEIGHT * 1.0f, 10.0f);
 
 }
 
@@ -45,8 +45,6 @@ void View::initialize()
 
     //call helper function, get the program shader ID if everything went ok.
     program = createShaders(shaders);
-
-
 
 
     //use the above program. After this statement, any rendering will use this above program

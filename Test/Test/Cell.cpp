@@ -158,19 +158,19 @@ void Cell::appendVertexIndex(std::vector<GLuint> *vertexIndex) {
 void Cell::appendVertexData(std::vector<VertexAttribs> *vertexData) {
 
     // 0: x, y
-    VertexAttribs v0(mX * mRatioWidth, mY * mRatioHeigth);
+    VertexAttribs v0(mX * mRatioWidth, - mY * mRatioHeigth);
     vertexData->push_back(v0);
 
     // 1: x + 1, y
-    VertexAttribs v1((mX + 1) * mRatioWidth, mY * mRatioHeigth);
+    VertexAttribs v1((mX + 1) * mRatioWidth, - mY * mRatioHeigth);
     vertexData->push_back(v1);
 
     // 2: x + 1, y + 1
-    VertexAttribs v2((mX + 1) * mRatioWidth, (mY + 1) * mRatioHeigth);
+    VertexAttribs v2((mX + 1) * mRatioWidth, - (mY + 1) * mRatioHeigth);
     vertexData->push_back(v2);
 
     // 3: x, y + 1
-    VertexAttribs v3(mX * mRatioWidth, (mY + 1) * mRatioHeigth);
+    VertexAttribs v3(mX * mRatioWidth, - (mY + 1) * mRatioHeigth);
     vertexData->push_back(v3);
 
 };
