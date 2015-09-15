@@ -1,11 +1,12 @@
 #include "Cell.h"
 #include "Utils.h"
 
-Cell::Cell(int x, int y, std::bitset<4> walls, int ratioHeigth, int ratioWidth)
+Cell::Cell(int index, int x, int y, std::bitset<4> walls, int ratioHeigth, int ratioWidth)
 {
     mX = x;
     mY = y;
     mWalls = walls;
+    mIndex = index;
 
     mRatioHeigth = ratioHeigth;
     mRatioWidth = ratioWidth;
@@ -113,3 +114,63 @@ void Cell::removeWall(int x1, int y1, int x2, int y2)
         }
     }
 }
+
+void Cell::appendVertexIndex(std::vector<GLuint> *vertexIndex) {
+
+    int firstIndex = mIndex;
+
+    /*
+    * Square Point index:
+    *  0   T   1
+    *  L       R
+    *  3   B   2
+    */
+
+    /* left L */
+    if (mWalls[3])
+    {
+        vertexIndex->push_back(firstIndex);
+        vertexIndex->push_back(firstIndex + 3);
+    }
+
+    /* top T */
+    if (mWalls[2])
+    {
+        vertexIndex->push_back(firstIndex);
+        vertexIndex->push_back(firstIndex + 1);
+    }
+
+    /* right R */
+    if (mWalls[1])
+    {
+        vertexIndex->push_back(firstIndex + 1);
+        vertexIndex->push_back(firstIndex + 2);
+    }
+
+    /* bottom */
+    if (mWalls[0])
+    {
+        vertexIndex->push_back(firstIndex + 2);
+        vertexIndex->push_back(firstIndex + 3);
+    }
+};
+
+void Cell::appendVertexData(std::vector<VertexAttribs> *vertexData) {
+
+    // 0: x, y
+    VertexAttribs v0(mX * mRatioWidth, mY * mRatioHeigth);
+    vertexData->push_back(v0);
+
+    // 1: x + 1, y
+    VertexAttribs v1((mX + 1) * mRatioWidth, mY * mRatioHeigth);
+    vertexData->push_back(v1);
+
+    // 2: x + 1, y + 1
+    VertexAttribs v2((mX + 1) * mRatioWidth, (mY + 1) * mRatioHeigth);
+    vertexData->push_back(v2);
+
+    // 3: x, y + 1
+    VertexAttribs v3(mX * mRatioWidth, (mY + 1) * mRatioHeigth);
+    vertexData->push_back(v3);
+
+};

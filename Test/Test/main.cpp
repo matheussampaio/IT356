@@ -22,7 +22,7 @@ void drawSquare(sf::RenderWindow *window);
 void updateMaze();
 
 /* Maze Instance */
-Maze mMaze("maze-edited.txt", 800, 800);
+Maze mMaze("maze-20x20.txt", 800, 800);
 
 /* Define if the screen should be updated. */
 bool mDrawScreen = true;
@@ -41,6 +41,8 @@ sf::RectangleShape mSquare;
 
 /* Our Main View */
 View mView;
+
+int t = 0;
 
 int main(int argc, char *argv[])
 {
@@ -64,7 +66,7 @@ int main(int argc, char *argv[])
     }
 
     init(&window);
-
+    
     // run the program as long as the window is open
     while (mRunning)
     {
@@ -95,13 +97,11 @@ void display(sf::RenderWindow *window) {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    window->draw(mMaze);
-
     mView.draw();
 
     if (mLeftBtnMousePressed)
     {
-        drawSquare(window);
+        //drawSquare(window);
     }
     
     //window->popGLStates();
@@ -227,6 +227,10 @@ void init(sf::RenderWindow *window)
     glClearColor(1, 1, 1, 0); // set clear code to white
 
     mMaze.setPosition(10, 10);
+
+    mMaze.getVertexData(mView.getVertexDataPointer());
+
+    mMaze.getVertexIndex(mView.getVertexIndexPointer());
 
     mView.initialize();
 }

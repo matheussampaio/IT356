@@ -90,6 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cell.h" />
+    <ClInclude Include="VertexAttribs.h" />
     <ClInclude Include="Maze.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="View.h" />

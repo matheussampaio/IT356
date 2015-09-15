@@ -1,11 +1,16 @@
 #ifndef CELL_H
 #define CELL_H
 
-#include "Utils.h"
-
 #include <bitset>
 #include <iostream>
 #include <cmath>
+#include <vector>
+
+#include <GL/glew.h>
+#include <GL/gl.h>
+
+#include "VertexAttribs.h"
+#include "Utils.h"
 
 #include <SFML/Graphics.hpp>
 
@@ -22,7 +27,7 @@ class Cell
     sf::Color NOT_WALL_COLOR = sf::Color::Transparent;
 
     /* Base Coordinates of the Cells */
-    int mX, mY;
+    int mX, mY, mIndex;
 
     /* Offsets */
     int mLeftOffset, mTopOffset;
@@ -32,7 +37,7 @@ class Cell
 
 public:
 
-    Cell(int x, int y, std::bitset<4> walls, int ratioHeigth, int ratioWidth);
+    Cell(int index, int x, int y, std::bitset<4> walls, int ratioHeigth, int ratioWidth);
 
     void refreshVertices();
     void refreshWalls();
@@ -45,9 +50,12 @@ public:
         target.draw(mVertices, states);
     };
 
+    void appendVertexIndex(std::vector<GLuint> *vertexIndex);
+
+    void appendVertexData(std::vector<VertexAttribs> *vertexData);
+
     int getX() { return mX; };
     int getY() { return mY; };
-
     int getWallsInInt() { return Utils::bitsetToInt(mWalls); };
 
 };

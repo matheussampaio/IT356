@@ -5,6 +5,10 @@
 #include <fstream>
 #include <stdlib.h>
 
+#include <GL/glew.h>
+#include <GL/gl.h>
+
+#include "VertexAttribs.h"
 #include "Cell.h"
 #include "Utils.h"
 
@@ -34,6 +38,9 @@ class Maze : public sf::Drawable, public sf::Transformable
 
     /* Cells */
     std::vector<Cell> mCells;
+
+    std::vector<GLuint> mVertexIndex;
+    std::vector<VertexAttribs> mVertexData;
 
     bool isBoardWall(int x1, int y1, int x2, int y2);
 
@@ -67,13 +74,30 @@ public:
 
     void update(int x1, int y1, int x2, int y2);
 
+
+
+    /* ACESSORS */
+
+    void getVertexIndex(std::vector<GLuint> *vertexIndex) {
+
+        for (int i = 0; i < mCells.size(); i++)
+        {
+            mCells[i].appendVertexIndex(vertexIndex);
+        }
+    };
+    
+    void getVertexData(std::vector<VertexAttribs> *vertexdata) {
+        for (int i = 0; i < mCells.size(); i++)
+        {
+            mCells[i].appendVertexData(vertexdata);
+        }
+    };
+
     int getRows() { return mRows; };
-
     int getColumns() { return mColumns; };
-
     int getRatioWidth() { return mRatioWidth; };
-
     int getRatioHeigth() { return mRatioHeigth; };
+
 };
 
 #endif

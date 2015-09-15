@@ -53,7 +53,7 @@ void Maze::loadMaze()
             int tempBitset;
             infile >> tempBitset;
 
-            mCells.push_back(Cell(x, y, std::bitset<4>(tempBitset), mRatioHeigth, mRatioWidth));
+            mCells.push_back(Cell((y * mColumns + x) * 4,  x, y, std::bitset<4>(tempBitset), mRatioHeigth, mRatioWidth));
         }
     }
 }

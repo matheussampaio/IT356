@@ -1,8 +1,11 @@
 #include "View.h"
 #include <GL/glew.h>
+
 #include <cstdlib>
 #include <fstream>
+#include <iostream>
 #include <vector>
+
 using namespace std;
 
 //glm headers to access various matrix producing functions, like ortho below in resize
@@ -25,7 +28,7 @@ void View::resize(int w, int h)
     *This program uses orthographic projection. The corresponding matrix for this projection is provided by the glm function below.
     */
 
-    proj = glm::ortho(-WINDOW_WIDTH / 2.0f, WINDOW_WIDTH / 2.0f, -WINDOW_HEIGHT / 2.0f, WINDOW_HEIGHT / 2.0f);
+    proj = glm::ortho(-10.0f, WINDOW_WIDTH - 10.0f, -10.0f, WINDOW_HEIGHT - 10.0f);
 
 }
 
@@ -132,7 +135,7 @@ void View::initialize()
 
     for (int i = 0; i<6; i++)
     {
-        VertexAttribs v;
+        VertexAttribs v(0,0);
 
         vertexdata.push_back(v);
         for (int j = 0; j<3; j++)
@@ -236,14 +239,15 @@ void View::initialize()
     *
     *See: http://www.opengl.org/sdk/docs/man/xhtml/glBufferData.xml
     */
-    glBufferData(GL_ARRAY_BUFFER, sizeof(VertexAttribs)*vertexdata.size(), &vertexdata[0], GL_STATIC_DRAW);
+
+    glBufferData(GL_ARRAY_BUFFER, sizeof(VertexAttribs)*mVertexData.size(), &mVertexData[0], GL_DYNAMIC_DRAW);
 
     /*
     *Next do the samem for the triangle indices. Since this buffer is storing indices and not vertex
     *data, the type of VBO is different
     */
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[IndexBuffer]);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint)*indices.size(), &indices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint)*mVertexIndex.size(), &mVertexIndex[0], GL_DYNAMIC_DRAW);
 
 
 
@@ -333,7 +337,7 @@ void View::draw()
     *We pass this along as the modelview matrix to the shader, which multiplies each incoming vertex's
     *position with this matrix
     */
-    modelView = glm::scale(glm::mat4(1.0), glm::vec3(100, 200, 200));
+    //modelView = glm::scale(glm::mat4(1.0), glm::vec3(100, 200, 200));
 
 
     /*
@@ -347,7 +351,7 @@ void View::draw()
 
     //ready to draw our "model", so simply bind its VAO
     glBindVertexArray(vao);
-    //  glDrawArrays(GL_TRIANGLES,0,NumVertices);
+    //glDrawArrays(GL_TRIANGLES,0,50);
     /*
     *glDrawElements is a "superpower" command, that actually starts all the drawing.
     *In effect, OpenGL must use all the VBOs to draw triangles in teh following way.
@@ -374,7 +378,7 @@ void View::draw()
     */
 
     // glPolygonMode(GL_FRONT,GL_LINE); //OUTLINES
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+    glDrawElements(GL_LINES, mVertexIndex.size(), GL_UNSIGNED_INT, BUFFER_OFFSET(0));
     //glDrawArrays(GL_TRIANGLES,1,3);
 
     glBindVertexArray(0);
@@ -480,7 +484,7 @@ void View::printShaderInfoLog(GLuint shader)
 
     glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infologLen);
     //	printOpenGLError();
-    if (infologLen>0)
+    if (infologLen > 0)
     {
         infoLog = (GLubyte *)malloc(infologLen);
         if (infoLog != NULL)
@@ -529,5 +533,23 @@ void View::getGLSLVersion(int *major, int *minor)
             *major = 0;
             *minor = 0;
         }
+    }
+}
+
+void View::setVertexIndex(vector<GLuint> vertexIndex) {
+    mVertexIndex.clear();
+
+    for (int i = 0; i < vertexIndex.size(); i++)
+    {
+        mVertexIndex.push_back(vertexIndex[i]);
+    }
+}
+
+void View::setVertexData(vector<VertexAttribs> vertexData) {
+    mVertexData.clear();
+    
+    for (int i = 0; i < vertexData.size(); i++)
+    {
+        mVertexData.push_back(vertexData[i]);
     }
 }

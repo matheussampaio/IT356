@@ -11,6 +11,10 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <string>
+#include <vector>
+
+#include "VertexAttribs.h"
+
 using namespace std;
 
 /*
@@ -25,12 +29,6 @@ using namespace std;
 #include <glm/glm.hpp>
 
 //a class that stores all the data relevant to a vertex
-class VertexAttribs
-{
-public:
-    float position[4]; //x,y,z,w
-    float color[3]; //color as r,g,b
-};
 
 class View
 {
@@ -63,6 +61,14 @@ public:
     void getOpenGLVersion(int *major, int *minor);
     void getGLSLVersion(int *major, int *minor);
 
+    void setVertexIndex(vector<GLuint> vertexIndex);
+    void setVertexData(vector<VertexAttribs> vertexData);
+    std::vector<GLuint>* getVertexIndexPointer() { return &mVertexIndex; };
+    vector<VertexAttribs>* getVertexDataPointer() { return &mVertexData; };
+
+    vector<VertexAttribs> mVertexData;
+
+
 protected:
     //helper function to compile and link our GLSL shaders
     GLuint createShaders(ShaderInfo *shaders);
@@ -86,6 +92,8 @@ private:
 
     //the actual projection and modelview matrices
     glm::mat4 proj, modelView;
+
+    vector<GLuint> mVertexIndex;
 };
 
 #endif // VIEW_H
