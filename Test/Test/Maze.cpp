@@ -6,6 +6,8 @@ Maze::Maze(std::string filename, int width, int heigth) {
     mHeigth = heigth;
 
     loadMaze();
+    updateRatio();
+
 }
 
 bool Maze::isBoardWall(int x1, int y1, int x2, int y2)
@@ -39,8 +41,6 @@ void Maze::loadMaze()
     infile >> mRows;
     infile >> mColumns;
 
-    updateRatio();
-
     // Read the star and end cells positions
     infile >> mStartCellRow >> mStartCellColumn >> mEndCellRow >> mEndCellColumn;
 
@@ -53,7 +53,7 @@ void Maze::loadMaze()
             int tempBitset;
             infile >> tempBitset;
 
-            mCells.push_back(Cell((y * mColumns + x) * 4,  x, y, std::bitset<4>(tempBitset), mRatioHeigth, mRatioWidth));
+            mCells.push_back(Cell((y * mColumns + x) * 4, x, y, std::bitset<4>(tempBitset)));
         }
     }
 }
@@ -185,6 +185,7 @@ void Maze::removeTwoWalls(std::vector<int> cellsIndex)
 void Maze::updateRatio() {
     mRatioWidth = mWidth * RATIO / mColumns;
     mRatioHeigth = mHeigth * RATIO / mRows;
+    mPadding = 10;
 }
 
 void Maze::save(std::string outputName)
@@ -215,12 +216,16 @@ void Maze::save(std::string outputName)
 
 }
 
-bool Maze::update(int x1, int y1, int x2, int y2)
+bool Maze::update(float x1, float y1, float x2, float y2)
 {
-
+    x1 = (x1 - mPadding) / mRatioWidth;
+    x2 = (x2 - mPadding) / mRatioWidth;
+    y1 = (y1 - mPadding) / mRatioHeigth;
+    y2 = (y2 - mPadding) / mRatioHeigth;
+    
     if (Maze::isUpdateValid(x1, y1, x2, y2))
     {
-        std::printf("Updating maze: %d,%d - %d,%d\n", x1, y1, x2, y2);
+        std::printf("Updating maze: %.2f,%.2f --> %.2f,%.2f\n", x1, y1, x2, y2);
 
         std::vector<int> updatedCellsIndex;
 
@@ -237,34 +242,57 @@ bool Maze::update(int x1, int y1, int x2, int y2)
         return true;
     }
 
-    std::printf("Ignoring updating maze: %d,%d - %d,%d\n", x1, y1, x2, y2);
+    std::printf("Ignoring updating maze: %.2f,%.2f -> %.2f,%.2f\n", x1, y1, x2, y2);
 
     return false;
 }
 
-bool Maze::isUpdateValid(int x1, int y1, int x2, int y2)
+bool Maze::isUpdateValid(float x1, float y1, float x2, float y2)
 {
-    sf::Vector2f position = getPosition();
 
-    if (x1 <= position.x || x2 >= mColumns * mRatioWidth + position.x)
+    if (x1 <= 0 || x1 >= mColumns)
     {
         return false;
     }
 
-    if (x2 <= position.x || x1 >= mColumns * mRatioWidth + position.x)
+    if (x2 <= 0 || x2 >= mColumns)
     {
         return false;
     }
 
-    if (y1 <= position.y || y2 >= mRows * mRatioHeigth + position.y)
+    if (y1 <= 0 || y1 >= mRows)
     {
         return false;
     }
 
-    if (y2 <= position.y || y1 >= mRows * mRatioHeigth + position.y)
+    if (y2 <= 0 || y2 >= mRows)
     {
         return false;
     }
 
     return true;
+}
+
+std::vector<VertexAttribs> Maze::getVertexData()
+{
+    std::vector<VertexAttribs> vertexdata;
+
+    for (int i = 0; i < mCells.size(); i++)
+    {
+        mCells[i].appendVertexData(&vertexdata, mRatioWidth, mRatioHeigth, mPadding);
+    }
+
+    return vertexdata;
+}
+
+std::vector<GLuint> Maze::getVertexIndex()
+{
+    std::vector<GLuint> vertexIndex;
+
+    for (int i = 0; i < mCells.size(); i++)
+    {
+        mCells[i].appendVertexIndex(&vertexIndex);
+    }
+
+    return vertexIndex;
 }
