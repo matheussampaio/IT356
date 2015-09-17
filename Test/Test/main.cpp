@@ -21,8 +21,14 @@ void processMouseMoved(sf::Event event);
 void drawSquare();
 void updateMaze();
 
+
+string FILENAME_INPUT = "maze-20x20.txt";
+string FILENAME_OUTPUT = "maze-edited.txt";
+
+int INIT_WIDTH = 800, INIT_HEIGHT = 800;
+
 /* Maze Instance */
-Maze mMaze("maze-20x20.txt", 800, 800);
+Maze mMaze(FILENAME_INPUT, INIT_WIDTH, INIT_HEIGHT);
 
 /* Keep program running */
 bool mRunning = true;
@@ -115,7 +121,7 @@ void processEvent(sf::Event event, sf::RenderWindow &window)
     // "close requested" event: we close the window
     if (event.type == sf::Event::Closed)
     {
-        mMaze.save("maze-edited.txt");
+        mMaze.save(FILENAME_OUTPUT);
 
         // end the program
         mRunning = false;
@@ -244,7 +250,7 @@ void initSquare() {
 void init(sf::RenderWindow *window)
 {
     /* Some configurations */
-    resize(800, 800);
+    resize(INIT_WIDTH, INIT_HEIGHT);
 
     window->setFramerateLimit(30);
 

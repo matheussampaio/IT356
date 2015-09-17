@@ -1,5 +1,7 @@
 #include "Maze.h"
 
+#include <algorithm>
+
 Maze::Maze(std::string filename, int width, int heigth) {
     mFilename = filename;
     mWidth = width;
@@ -183,9 +185,10 @@ void Maze::removeTwoWalls(std::vector<int> cellsIndex)
 }
 
 void Maze::updateRatio() {
-    mRatioWidth = mWidth * RATIO / mColumns;
-    mRatioHeigth = mHeigth * RATIO / mRows;
-    mPadding = 10;
+    mRatio = std::min(mWidth * MAX_SIZE / mColumns, mHeigth * MAX_SIZE / mRows);
+
+    mPaddingX = (mWidth - mColumns * mRatio) / 2;
+    mPaddingY = (mHeigth - mRows * mRatio) / 2;
 }
 
 void Maze::save(std::string outputName)
@@ -218,10 +221,10 @@ void Maze::save(std::string outputName)
 
 bool Maze::update(float x1, float y1, float x2, float y2)
 {
-    x1 = (x1 - mPadding) / mRatioWidth;
-    x2 = (x2 - mPadding) / mRatioWidth;
-    y1 = (y1 - mPadding) / mRatioHeigth;
-    y2 = (y2 - mPadding) / mRatioHeigth;
+    x1 = (x1 - mPaddingX) / mRatio;
+    x2 = (x2 - mPaddingX) / mRatio;
+    y1 = (y1 - mPaddingY) / mRatio;
+    y2 = (y2 - mPaddingY) / mRatio;
     
     if (Maze::isUpdateValid(x1, y1, x2, y2))
     {
@@ -279,7 +282,7 @@ std::vector<VertexAttribs> Maze::getVertexData()
 
     for (int i = 0; i < mCells.size(); i++)
     {
-        mCells[i].appendVertexData(&vertexdata, mRatioWidth, mRatioHeigth, mPadding);
+        mCells[i].appendVertexData(&vertexdata, mRatio, mPaddingX, mPaddingY);
     }
 
     return vertexdata;

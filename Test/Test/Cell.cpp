@@ -131,14 +131,14 @@ void Cell::appendVertexIndex(std::vector<GLuint> *vertexIndex) {
     }
 };
 
-void Cell::appendVertexData(std::vector<VertexAttribs> *vertexData, float ratioWidth, float ratioHeigth, float padding)
+void Cell::appendVertexData(std::vector<VertexAttribs> *vertexData, float ratio, float paddingX, float paddingY)
 {
     VertexAttribs v;
 
     for (int i = 0; i < 4; i++)
     {
         /* FIXME: Y-axis are reversed, but this should be transform work. */
-        v.setXYZW(mVertex[i].getX() * ratioWidth + padding, mVertex[i].getY() * ratioHeigth * -1.0f - padding, 0, 1);
+        v.setXYZW(mVertex[i].getX() * ratio + paddingX, mVertex[i].getY() * ratio * -1.0f - paddingY, 0, 1);
         vertexData->push_back(v);
     }
 };

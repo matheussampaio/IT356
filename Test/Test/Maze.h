@@ -23,12 +23,11 @@ class Maze : public sf::Drawable, public sf::Transformable
     int mStartCellRow, mStartCellColumn, mEndCellRow, mEndCellColumn;
 
     /* Offsets */
-    int mPadding;
-    float OFFSET = 0.01f;
+    float mPaddingX, mPaddingY;
 
     /* Ratio constant */
-    int mRatioWidth, mRatioHeigth;
-    float RATIO = 0.98f;
+    int mRatio;
+    float MAX_SIZE = 0.98f;
 
     /* Filename */
     std::string mFilename;
@@ -77,8 +76,6 @@ public:
 
     int getRows() { return mRows; };
     int getColumns() { return mColumns; };
-    int getRatioWidth() { return mRatioWidth; };
-    int getRatioHeigth() { return mRatioHeigth; };
 
 };
 
