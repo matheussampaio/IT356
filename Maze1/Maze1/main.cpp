@@ -1,216 +1,262 @@
-/*
- * This is the main file. It sets up the window using sfml and initializes OpenGL extensions using glew
- *
- * We use sfml, an open-source library. SFML has very basic support for guis. There is SFGUI but I have not used it yet.
- * SFML is by no means a full-fledged powerful UI framework, but it is very simple to use, and is cross-platform. But one of the things going for it is speed.
- * Feel free to use and modify this file for every project.
- *
- * SFML was written for C++ and opengl was written for C
- * In order to initialize OpenGL extensions to use OpenGL 4, we use glew. This simplifies setting it up for every program.
- **/
+#include <iostream>
+#include <algorithm>
+
 #include <SFML/Graphics.hpp>
 #include <GL/glew.h>
 #include <SFML/OpenGL.hpp>
+
 #include "View.h"
-#include <iostream>
-#include <string>
-#include <sstream>
+#include "Maze.h"
+
 using namespace std;
 
-/* function prototypes */
-void init();
+/* Methods Prototypes */
+void init(sf::RenderWindow *window);
 void resize(int w, int h);
 void display(sf::RenderWindow *window);
-void processEvent(sf::Event event, sf::RenderWindow& window);
-void drawText(sf::RenderWindow& window, string text, int x, int y);
+void processEvent(sf::Event event, sf::RenderWindow &window);
+void processLeftMousePressed(sf::Event event);
+void processLeftMouseReleased(sf::Event event);
+void processMouseMoved(sf::Event event);
+void drawSquare();
+void updateMaze();
 
-View v; //an object to our View class that encapsulates everything that we do.
-sf::Font font;
-sf::Clock sfclock;
-int frames;
-double frame_rate;
+
+string FILENAME_INPUT = "maze-20x20.txt";
+string FILENAME_OUTPUT = "maze-edited.txt";
+
+int INIT_WIDTH = 800, INIT_HEIGHT = 800;
+
+/* Maze Instance */
+Maze mMaze(FILENAME_INPUT, INIT_WIDTH, INIT_HEIGHT);
+
+/* Keep program running */
+bool mRunning = true;
+
+/* Keep track if the left mouse button is pressed */
+bool mLeftBtnMousePressed = false;
+
+/* Keep track of the positions of mouse */
+int mLeftBtnStartX, mLeftBtnStartY, mLeftBtnCurrentX, mLeftBtnCurrentY;
+
+// create the window
+sf::RectangleShape mSquare;
+
+/* Our Main View */
+View mView;
+View mViewSquare;
+
+/* Define is data and index should update */
+bool mDataOutdated = true, mIndexOutdated = true;
 
 int main(int argc, char *argv[])
 {
-	frames = 0;
-	frame_rate = 0;
+    sf::ContextSettings contextSettings;
+    contextSettings.depthBits = 32;
+    contextSettings.majorVersion = 4;
+    contextSettings.minorVersion = 0;
 
-	// Request a 32-bits depth buffer when creating the window
-	sf::ContextSettings contextSettings;
-	contextSettings.depthBits = 32;
-	contextSettings.majorVersion = 4;
-	contextSettings.minorVersion = 0;
+    /* Creating window */
+    sf::RenderWindow window(sf::VideoMode(800, 800), "Maze", sf::Style::Default, contextSettings);
 
-	// Create the main window
-	sf::RenderWindow window(sf::VideoMode(800, 600), "Maze 1", sf::Style::Default, contextSettings);
-	resize(800, 600);
-	//window.setVerticalSyncEnabled(true);
+    //glew currently has a bug that causes problems with 4.0. Setting this glew flag is the temporary solution for it
+    glewExperimental = GL_TRUE;
 
-	// Make it the active window for OpenGL calls
-	window.setActive();
+    //initialize glew which initializes all the OpenGL extensions.
+    if (glewInit() != GLEW_OK)
+    {
+        cerr << "Unable to initialize GLEW...exiting" << endl;
+        return EXIT_FAILURE;
+    }
 
-	//glew currently has a bug that causes problems with 4.0. Setting this glew flag is the temporary solution for it
-	glewExperimental = GL_TRUE;
+    init(&window);
 
-	//initialize glew which initializes all the OpenGL extensions.
-	if (glewInit() != GLEW_OK)
-	{
-		cerr << "Unable to initialize GLEW...exiting" << endl;
-		return EXIT_FAILURE;
-	}
+    // run the program as long as the window is open
+    while (mRunning)
+    {
+        // check all the window's events that were triggered since the last iteration of the loop
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            processEvent(event, window);
+        }
 
-	//initialize stuff. This will likely change with every program.
-	init();
+        display(&window);
+    }
 
-	// Start game loop
-	while (window.isOpen())
-	{
-		// Process events
-		sf::Event event;
-		while (window.pollEvent(event))
-		{
-			processEvent(event, window);
-		}
-
-		if (window.isOpen())
-			display(&window);
-	}
-
-	return EXIT_SUCCESS;
-}
-
-/*
- * This will be the function that processes any events
- */
-void processEvent(sf::Event event, sf::RenderWindow& window)
-{
-	// Close window : exit
-	if (event.type == sf::Event::Closed)
-		window.close();
-
-	// Escape key : exit
-	if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))
-		window.close();
-
-	// Adjust the viewport when the window is resized
-	if (event.type == sf::Event::Resized)
-		resize(event.size.width, event.size.height);
-
-	if (event.type == sf::Event::MouseWheelMoved)
-	{
-		cout << "Mouse wheel moved" << endl;
-	}
-}
-
-/*
- * This function helps us to draw text over a part of the window
- */
-void drawText(sf::RenderWindow *window, string text, int x, int y)
-{
-	// Create some text to draw on top of our OpenGL object
-
-	sf::Text textobj(text, font);
-
-	textobj.setCharacterSize(18);
-	textobj.setColor(sf::Color(255, 255, 255, 255));
-	textobj.setPosition((float)x, (float)y);
-
-
-	window->pushGLStates();
-	window->resetGLStates();
-	window->draw(textobj);
-	window->popGLStates();
-}
-
-/*
- * This will be our display function. Whenever glut needs to redraw the window, it will call this function.
- * The name of this function (display) is of no consequence: you can name it whatever you want, so long as the constraints below are obeyed.
- * Thus all your rendering code should be in this function, or should be called from this function.
- *
- */
-void display2(sf::RenderWindow *window)
-{
-	if (frames == 0)
-		sfclock.restart();
-
-	// Draw using SFML
-	window->pushGLStates();
-	window->resetGLStates();
-	//insert SFML drawing code here (any part you are using that does not involve opengl code)
-	window->popGLStates();
-
-	//set up the background color of the window. This does NOT clear the window. Right now it is (0,0,0) which is black
-	glClearColor(0, 0, 0, 0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //this command actually clears the window.
-	glEnable(GL_DEPTH_TEST);
-	v.draw(); //simply delegate to our view class that has all the data and does all the rendering
-
-	if (frames > 500)
-	{
-		sf::Time t = sfclock.getElapsedTime();
-		frame_rate = frames / t.asSeconds();
-		frames = 0;
-	}
-	else
-	{
-		frames++;
-	}
-	stringstream str;
-
-	str << "Frame rate " << frame_rate;
-	// Draw some text on top of our OpenGL object
-	drawText(window, str.str(), window->getSize().x - 200, 50);
-
-
-	// Finally, display the rendered frame on screen
-	window->display();
-	//	cout << "Rendering" << endl;
+    return EXIT_SUCCESS;
 }
 
 void display(sf::RenderWindow *window) {
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set background color to black and opaque
-	glClear(GL_COLOR_BUFFER_BIT);         // Clear the color buffer (background)
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Draw a Red 1x1 Square centered at origin
-	glBegin(GL_QUADS);              // Each set of 4 vertices form a quad
-	glColor3f(1.0f, 0.0f, 0.0f); // Red
-	glVertex2f(-0.5f, -0.5f);    // x, y
-	glVertex2f(0.5f, -0.5f);
-	glVertex2f(0.5f, 0.5f);
-	glVertex2f(-0.5f, 0.5f);
-	glEnd();
+    if (mDataOutdated)
+    {
+        mView.setVertexData(mMaze.getVertexData());
 
-	glFlush();  // Render now
+        mDataOutdated = false;
+    }
+
+    if (mIndexOutdated)
+    {
+        mView.setVertexIndex(mMaze.getVertexIndex());
+
+        mIndexOutdated = false;
+    }
+
+    mView.draw();
+
+    if (mLeftBtnMousePressed)
+    {
+        drawSquare();
+    }
+
+    // end the current frame
+    window->display();
+
 }
 
-/*
- * This function will be called by glut whenever the window resizes. This happens initially when it creates the window, and later if the user manually resizes the window or maximizes it.
- * The name of this function (resize) is of no consequence: you can name it whatever you want, so long as the constraints below are obeyed.
- * This function must take two integers as parameters, the width and height of the resized window in that order
- * This function must return void.
- **/
+void processEvent(sf::Event event, sf::RenderWindow &window)
+{
+    // "close requested" event: we close the window
+    if (event.type == sf::Event::Closed)
+    {
+        mMaze.save(FILENAME_OUTPUT);
+
+        // end the program
+        mRunning = false;
+    }
+
+    if (event.type == sf::Event::Resized)
+    {
+        // adjust the viewport when the window is resized
+        resize(event.size.width, event.size.height);
+    }
+
+    if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
+    {
+        processLeftMousePressed(event);
+    }
+
+    if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left)
+    {
+        processLeftMouseReleased(event);
+    }
+
+    if (event.type == sf::Event::MouseMoved)
+    {
+        processMouseMoved(event);
+    }
+}
+
+void processLeftMousePressed(sf::Event event)
+{
+    mLeftBtnMousePressed = true;
+
+    mLeftBtnStartX = event.mouseButton.x;
+    mLeftBtnStartY = event.mouseButton.y;
+
+    mLeftBtnCurrentX = event.mouseButton.x;
+    mLeftBtnCurrentY = event.mouseButton.y;
+}
+
+void processLeftMouseReleased(sf::Event event)
+{
+    mLeftBtnMousePressed = false;
+
+    updateMaze();
+}
+
+void processMouseMoved(sf::Event event)
+{
+    if (mLeftBtnMousePressed)
+    {
+        mLeftBtnCurrentX = event.mouseMove.x;
+        mLeftBtnCurrentY = event.mouseMove.y;
+    }
+}
+
+void drawSquare()
+{
+    std::vector<VertexAttribs> squareVertex;
+    VertexAttribs v;
+
+    v.setColor(1, 0, 0);
+
+    v.setXYZW(mLeftBtnStartX, -mLeftBtnStartY, 0, 1);
+    squareVertex.push_back(v);
+
+    v.setXYZW(mLeftBtnCurrentX, -mLeftBtnStartY, 0, 1);
+    squareVertex.push_back(v);
+
+    v.setXYZW(mLeftBtnCurrentX, -mLeftBtnCurrentY, 0, 1);
+    squareVertex.push_back(v);
+
+    v.setXYZW(mLeftBtnStartX, -mLeftBtnCurrentY, 0, 1);
+    squareVertex.push_back(v);
+
+    mViewSquare.setVertexData(squareVertex);
+
+    mViewSquare.draw();
+
+}
+
+void updateMaze()
+{
+    bool isUpdated = mMaze.update(
+        min(mLeftBtnStartX, mLeftBtnCurrentX),
+        min(mLeftBtnStartY, mLeftBtnCurrentY),
+        max(mLeftBtnStartX, mLeftBtnCurrentX),
+        max(mLeftBtnStartY, mLeftBtnCurrentY)
+        );
+
+    if (isUpdated)
+    {
+        mIndexOutdated = true;
+    }
+}
+
 void resize(int w, int h)
 {
-	//delegate to our view class.
-	v.resize(w, h);
+    printf("Window resized: %d, %d\n", w, h);
 
-	//sets the viewport to cover the entire area of the resized window
-	//glViewport(leftx,topy,width,height)
-	glViewport(0, 0, w, h);
+    //delegate to our view class.
+    mView.resize(w, h);
+    mViewSquare.resize(w, h);
+
+    mMaze.resize(w, h);
+
+    mDataOutdated = true;
+
+    //sets the viewport to cover the entire area of the resized window
+    //glViewport(leftx,topy,width,height)
+    glViewport(0, 0, w, h);
 }
 
-void init()
+void initSquare() {
+    mViewSquare.initialize();
+
+    std::vector<GLuint> squareIndex;
+
+    for (int i = 0; i < 4; i++)
+    {
+        squareIndex.push_back(i);
+        squareIndex.push_back((i + 1) % 4);
+    }
+
+    mViewSquare.setVertexIndex(squareIndex);
+}
+
+void init(sf::RenderWindow *window)
 {
-	int major, minor;
-	v.getOpenGLVersion(&major, &minor);
+    /* Some configurations */
+    resize(INIT_WIDTH, INIT_HEIGHT);
 
-	cout << "Opengl version supported : " << major << "." << minor << endl;
-	v.getGLSLVersion(&major, &minor);
-	cout << "GLSL version supported : " << major << "." << minor << endl;
+    window->setFramerateLimit(30);
 
-	//delegate to our view class to do all the initializing
-	v.initialize();
+    glClearColor(1, 1, 1, 0); // set clear code to white
 
-	if (!font.loadFromFile("resources/sansation.ttf"))
-		return;
+    mView.initialize();
+
+    initSquare();
 }

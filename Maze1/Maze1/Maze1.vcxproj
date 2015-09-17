@@ -11,7 +11,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Cell.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Maze.cpp" />
+    <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="VectorAttribs.cpp" />
     <ClCompile Include="View.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -24,6 +28,10 @@
     <None Include="resources\Thumbs.db" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Cell.h" />
+    <ClInclude Include="Maze.h" />
+    <ClInclude Include="Utils.h" />
+    <ClInclude Include="VertexAttribs.h" />
     <ClInclude Include="View.h" />
   </ItemGroup>
   <ItemGroup>

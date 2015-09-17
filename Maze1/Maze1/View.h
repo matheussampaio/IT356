@@ -1,7 +1,7 @@
 /*
- * The View class is our way of encapsulating all the data and OpenGL rendering required for our projects.
- * Thus, this class is the one that will change most often from one program to another
- *
+* The View class is our way of encapsulating all the data and OpenGL rendering required for our projects.
+* Thus, this class is the one that will change most often from one program to another
+*
 */
 
 #ifndef VIEW_H
@@ -11,26 +11,24 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <string>
+#include <vector>
+
+#include "VertexAttribs.h"
+
 using namespace std;
 
 /*
- * we are using glm, a mathematics library for OpenGL
- * glm has two advantages:
- * 1. It is based on the GLSL specification. That is, all the data structures, functions and algorithms it offers
- *    follow the same convention as GLSL shaders. Therefore the transition to GLSL will be very smooth.
- * 2. glm is completely header-based. Thus there are no libraries or dlls to link to. This makes it very portable.
- **/
+* we are using glm, a mathematics library for OpenGL
+* glm has two advantages:
+* 1. It is based on the GLSL specification. That is, all the data structures, functions and algorithms it offers
+*    follow the same convention as GLSL shaders. Therefore the transition to GLSL will be very smooth.
+* 2. glm is completely header-based. Thus there are no libraries or dlls to link to. This makes it very portable.
+**/
 
 //the include below is for the basic glm stuff. You will find this header until C:\QTFiles\glm, so include that path in the project file
 #include <glm/glm.hpp>
 
 //a class that stores all the data relevant to a vertex
-class VertexAttribs
-{
-public:
-    float position[4]; //x,y,z,w
-    float color[3]; //color as r,g,b
-};
 
 class View
 {
@@ -38,10 +36,10 @@ class View
 #define BUFFER_OFFSET(offset) ((void *)(offset))
 
 
-        //the different kinds of vertex buffer objects (VBOs)
-    enum Buffer_IDs {ArrayBuffer,IndexBuffer,NumBuffers};
-        //the different kinds of attributes for a vertex. This corresponds to the variables in VertexAttribs class above.
-   // enum Attrib_IDs {vPosition=0,vColor=1};
+    //the different kinds of vertex buffer objects (VBOs)
+    enum Buffer_IDs { ArrayBuffer, IndexBuffer, NumBuffers };
+    //the different kinds of attributes for a vertex. This corresponds to the variables in VertexAttribs class above.
+    // enum Attrib_IDs {vPosition=0,vColor=1};
 
     //a structure that encapsulates information about our GLSL shaders.
     typedef struct {
@@ -55,13 +53,19 @@ public:
     View();
 
     //the delegation functions called from the glut functions in main.cpp
-    void resize(int w,int h);
+    void resize(int w, int h);
     void initialize();
     void draw();
 
     //helper functions to probe the supported (latest) version of OpenGL and GLSL.
-    void getOpenGLVersion(int *major,int *minor);
-    void getGLSLVersion(int *major,int *minor);
+    void getOpenGLVersion(int *major, int *minor);
+    void getGLSLVersion(int *major, int *minor);
+
+    void setVertexIndex(vector<GLuint> vertexIndex);
+    void setVertexData(vector<VertexAttribs> vertexData);
+
+    vector<VertexAttribs> mVertexData;
+    vector<GLuint> mVertexIndex;
 
 protected:
     //helper function to compile and link our GLSL shaders
@@ -72,9 +76,9 @@ protected:
 
 private:
     //the width and height of the window
-    int WINDOW_WIDTH,WINDOW_HEIGHT;
-	//the GLSL program id
-	GLuint program;
+    int WINDOW_WIDTH, WINDOW_HEIGHT;
+    //the GLSL program id
+    GLuint program;
     //all our Vertex Access Object IDs
     GLuint vao;
     //all our Vertex Buffer Object IDs
@@ -82,10 +86,11 @@ private:
     //the number of vertices we will draw (helper only)
     const GLuint NumVertices;
     //IDs for locating various variables in our shaders
-    GLint projectionLocation,modelViewLocation,vPositionLocation,vColorLocation;
+    GLint projectionLocation, modelViewLocation, vPositionLocation, vColorLocation;
 
     //the actual projection and modelview matrices
-    glm::mat4 proj,modelView;
+    glm::mat4 proj, modelView;
+
 };
 
 #endif // VIEW_H
