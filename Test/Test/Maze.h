@@ -23,12 +23,11 @@ class Maze : public sf::Drawable, public sf::Transformable
     int mStartCellRow, mStartCellColumn, mEndCellRow, mEndCellColumn;
 
     /* Offsets */
-    int mLeftOffset, mTopOffset;
-    float OFFSET = 0.01;
+    float mPaddingX, mPaddingY;
 
     /* Ratio constant */
-    int mRatioWidth, mRatioHeigth;
-    float RATIO = 0.98;
+    int mRatio;
+    float MAX_SIZE = 0.98f;
 
     /* Filename */
     std::string mFilename;
@@ -54,7 +53,7 @@ class Maze : public sf::Drawable, public sf::Transformable
     
     void updateRatio();
 
-    bool isUpdateValid(int x1, int y1, int x2, int y2);
+    bool isUpdateValid(float x1, float y1, float x2, float y2);
 
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
@@ -67,36 +66,16 @@ public:
 
     void save(std::string outputName);
 
-    bool update(int x1, int y1, int x2, int y2);
+    bool update(float x1, float y1, float x2, float y2);
+    void resize(float width, float heigth);
 
     /* ACESSORS */
 
-    std::vector<GLuint> getVertexIndex() {
-        std::vector<GLuint> vertexIndex;
-
-        for (int i = 0; i < mCells.size(); i++)
-        {
-            mCells[i].appendVertexIndex(&vertexIndex);
-        }
-
-        return vertexIndex;
-    };
-    
-    std::vector<VertexAttribs> getVertexData() {
-        std::vector<VertexAttribs> vertexdata;
-
-        for (int i = 0; i < mCells.size(); i++)
-        {
-            mCells[i].appendVertexData(&vertexdata);
-        }
-
-        return vertexdata;
-    };
+    std::vector<GLuint> getVertexIndex();
+    std::vector<VertexAttribs> getVertexData();
 
     int getRows() { return mRows; };
     int getColumns() { return mColumns; };
-    int getRatioWidth() { return mRatioWidth; };
-    int getRatioHeigth() { return mRatioHeigth; };
 
 };
 

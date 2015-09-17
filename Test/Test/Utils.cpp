@@ -1,11 +1,11 @@
 #include "Utils.h"
 
-bool Utils::isPointEqual(int x1, int y1, int x2, int y2)
+bool Utils::isPointEqual(float x1, float y1, float x2, float y2)
 {
     return (x1 == x2 && y1 == y2);
 }
 
-bool Utils::isPointInSquare(int x, int y, int squareX1, int squareY1, int squareX2, int squareY2)
+bool Utils::isPointInSquare(float x, float y, float squareX1, float squareY1, float squareX2, float squareY2)
 {
     return (squareX1 <= x && x <= squareX2 && squareY1 <= y && y <= squareY2);
 }
