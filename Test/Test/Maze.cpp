@@ -53,7 +53,7 @@ void Maze::loadMaze()
             int tempBitset;
             infile >> tempBitset;
 
-            mCells.push_back(Cell(x, y, std::bitset<4>(tempBitset), mRatioHeigth, mRatioWidth));
+            mCells.push_back(Cell((y * mColumns + x) * 4,  x, y, std::bitset<4>(tempBitset), mRatioHeigth, mRatioWidth));
         }
     }
 }
@@ -129,6 +129,8 @@ void Maze::removeTwoWalls(std::vector<int> cellsIndex)
 {
     if (cellsIndex.size() > 1)
     {
+        std::cout << "removing two walls" << std::endl;
+
         /* count walls in updateds cells */
         int firstX, firstY, secondX, secondY, firstWallX1, firstWallY1, firstWallX2,
             firstWallY2, secondWallX1, secondWallY1, secondWallX2, secondWallY2;
@@ -168,13 +170,15 @@ void Maze::removeTwoWalls(std::vector<int> cellsIndex)
         /* if second wall is BOARD WALL, do it again */
         } while (isBoardWall(secondWallX1, secondWallY1, secondWallX2, secondWallY2));
 
+        std::printf("Removing wall: %d,%d - %d,%d\n", firstWallX1, firstWallY1, firstWallX2, firstWallY2);
+        std::printf("Removing wall: %d,%d - %d,%d\n", secondWallX1, secondWallY1, secondWallX2, secondWallY2);
+
         /* remove both walls */
         for (int i = 0; i < mCells.size(); i++)
         {
             mCells[i].removeWall(firstWallX1, firstWallY1, firstWallX2, firstWallY2);
             mCells[i].removeWall(secondWallX1, secondWallY1, secondWallX2, secondWallY2);
         }
-
     }
 }
 
@@ -206,12 +210,18 @@ void Maze::save(std::string outputName)
     }
 
     myfile.close();
+
+    std::cout << "Maze saved: " << outputName << std::endl;
+
 }
 
-void Maze::update(int x1, int y1, int x2, int y2)
+bool Maze::update(int x1, int y1, int x2, int y2)
 {
+
     if (Maze::isUpdateValid(x1, y1, x2, y2))
     {
+        std::printf("Updating maze: %d,%d - %d,%d\n", x1, y1, x2, y2);
+
         std::vector<int> updatedCellsIndex;
 
         for (int i = 0; i < mCells.size(); i++)
@@ -223,7 +233,13 @@ void Maze::update(int x1, int y1, int x2, int y2)
         }
 
         removeTwoWalls(updatedCellsIndex);
+
+        return true;
     }
+
+    std::printf("Ignoring updating maze: %d,%d - %d,%d\n", x1, y1, x2, y2);
+
+    return false;
 }
 
 bool Maze::isUpdateValid(int x1, int y1, int x2, int y2)

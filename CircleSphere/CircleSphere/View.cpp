@@ -30,7 +30,7 @@ void View::initObjects()
 	TriangleMesh tmesh;
 	
 
-	int SLICES = 4;
+	int SLICES = 20;
 	int STACKS = 10;
 	vector<VertexAttribs> verts;
 	vector<unsigned int> triangles;

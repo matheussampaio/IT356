@@ -1,11 +1,16 @@
 #ifndef CELL_H
 #define CELL_H
 
-#include "Utils.h"
-
 #include <bitset>
 #include <iostream>
 #include <cmath>
+#include <vector>
+
+#include <GL/glew.h>
+#include <GL/gl.h>
+
+#include "VertexAttribs.h"
+#include "Utils.h"
 
 #include <SFML/Graphics.hpp>
 
@@ -14,15 +19,8 @@ class Cell
     /* Bits representing the walls*/
     std::bitset<4> mWalls;
 
-    /* Quad Points of the Cells */
-    sf::VertexArray mVertices;
-
-    /* Color of the wall */
-    sf::Color WALL_COLOR = sf::Color::Black;
-    sf::Color NOT_WALL_COLOR = sf::Color::Transparent;
-
     /* Base Coordinates of the Cells */
-    int mX, mY;
+    int mX, mY, mIndex;
 
     /* Offsets */
     int mLeftOffset, mTopOffset;
@@ -30,24 +28,23 @@ class Cell
     /* Screen Ratio */
     int mRatioWidth, mRatioHeigth;
 
+    VertexAttribs mVertex[4];
+
 public:
 
-    Cell(int x, int y, std::bitset<4> walls, int ratioHeigth, int ratioWidth);
-
-    void refreshVertices();
-    void refreshWalls();
+    Cell(int index, int x, int y, std::bitset<4> walls, int ratioHeigth, int ratioWidth);
 
     bool update(int x1, int y1, int x2, int y2);
 
     void removeWall(int x1, int y1, int x2, int y2);
+    bool wallIsEqual(int begin, int end, int x1, int y1, int x2, int y2);
 
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const {
-        target.draw(mVertices, states);
-    };
+    void appendVertexIndex(std::vector<GLuint> *vertexIndex);
+
+    void appendVertexData(std::vector<VertexAttribs> *vertexData);
 
     int getX() { return mX; };
     int getY() { return mY; };
-
     int getWallsInInt() { return Utils::bitsetToInt(mWalls); };
 
 };

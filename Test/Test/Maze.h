@@ -1,12 +1,16 @@
 #ifndef MAZE_H
 #define MAZE_H
 
-#include "Cell.h"
-#include "Utils.h"
-
 #include <string>
 #include <fstream>
 #include <stdlib.h>
+
+#include <GL/glew.h>
+#include <GL/gl.h>
+
+#include "VertexAttribs.h"
+#include "Cell.h"
+#include "Utils.h"
 
 #include <SFML/Graphics.hpp>
 
@@ -35,6 +39,9 @@ class Maze : public sf::Drawable, public sf::Transformable
     /* Cells */
     std::vector<Cell> mCells;
 
+    std::vector<GLuint> mVertexIndex;
+    std::vector<VertexAttribs> mVertexData;
+
     bool isBoardWall(int x1, int y1, int x2, int y2);
 
     void loadMaze();
@@ -51,12 +58,7 @@ class Maze : public sf::Drawable, public sf::Transformable
 
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
-        states.transform *= getTransform();
 
-        for (int i = 0; i < mRows * mColumns; ++i)
-        {
-            mCells[i].draw(target, states);
-        }
     }
 
 public:
@@ -65,15 +67,37 @@ public:
 
     void save(std::string outputName);
 
-    void update(int x1, int y1, int x2, int y2);
+    bool update(int x1, int y1, int x2, int y2);
+
+    /* ACESSORS */
+
+    std::vector<GLuint> getVertexIndex() {
+        std::vector<GLuint> vertexIndex;
+
+        for (int i = 0; i < mCells.size(); i++)
+        {
+            mCells[i].appendVertexIndex(&vertexIndex);
+        }
+
+        return vertexIndex;
+    };
+    
+    std::vector<VertexAttribs> getVertexData() {
+        std::vector<VertexAttribs> vertexdata;
+
+        for (int i = 0; i < mCells.size(); i++)
+        {
+            mCells[i].appendVertexData(&vertexdata);
+        }
+
+        return vertexdata;
+    };
 
     int getRows() { return mRows; };
-
     int getColumns() { return mColumns; };
-
     int getRatioWidth() { return mRatioWidth; };
-
     int getRatioHeigth() { return mRatioHeigth; };
+
 };
 
 #endif
