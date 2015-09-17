@@ -24,9 +24,6 @@ void updateMaze();
 /* Maze Instance */
 Maze mMaze("maze-20x20.txt", 800, 800);
 
-/* Define if the screen should be updated. */
-bool mDrawScreen = true;
-
 /* Keep program running */
 bool mRunning = true;
 
@@ -42,6 +39,9 @@ sf::RectangleShape mSquare;
 /* Our Main View */
 View mView;
 View mViewSquare;
+
+/* Define is data and index should update */
+bool mDataOutdated = true, mIndexOutdated = true;
 
 int main(int argc, char *argv[])
 {
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     }
 
     init(&window);
-    
+
     // run the program as long as the window is open
     while (mRunning)
     {
@@ -84,13 +84,27 @@ int main(int argc, char *argv[])
 void display(sf::RenderWindow *window) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    if (mDataOutdated)
+    {
+        mView.setVertexData(mMaze.getVertexData());
+
+        mDataOutdated = false;
+    }
+
+    if (mIndexOutdated)
+    {
+        mView.setVertexIndex(mMaze.getVertexIndex());
+
+        mIndexOutdated = false;
+    }
+
     mView.draw();
 
     if (mLeftBtnMousePressed)
     {
         drawSquare();
     }
-    
+
     // end the current frame
     window->display();
 
@@ -109,10 +123,8 @@ void processEvent(sf::Event event, sf::RenderWindow &window)
 
     if (event.type == sf::Event::Resized)
     {
-        mDrawScreen = true;
-
         // adjust the viewport when the window is resized
-        glViewport(0, 0, event.size.width, event.size.height);
+        resize(event.size.width, event.size.height);
     }
 
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
@@ -194,16 +206,21 @@ void updateMaze()
 
     if (isUpdated)
     {
-        mView.setVertexIndex(mMaze.getVertexIndex());
-        mView.setVertexData(mMaze.getVertexData());
+        mIndexOutdated = true;
     }
 }
 
 void resize(int w, int h)
 {
+    printf("Window resized: %d, %d\n", w, h);
+
     //delegate to our view class.
     mView.resize(w, h);
     mViewSquare.resize(w, h);
+
+    mMaze.resize(w, h);
+
+    mDataOutdated = true;
 
     //sets the viewport to cover the entire area of the resized window
     //glViewport(leftx,topy,width,height)
@@ -228,15 +245,12 @@ void init(sf::RenderWindow *window)
 {
     /* Some configurations */
     resize(800, 800);
-    
+
     window->setFramerateLimit(30);
 
     glClearColor(1, 1, 1, 0); // set clear code to white
 
     mView.initialize();
-
-    mView.setVertexData(mMaze.getVertexData());
-    mView.setVertexIndex(mMaze.getVertexIndex());
 
     initSquare();
 }

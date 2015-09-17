@@ -296,3 +296,11 @@ std::vector<GLuint> Maze::getVertexIndex()
 
     return vertexIndex;
 }
+
+void Maze::resize(float width, float heigth)
+{
+    mWidth = width;
+    mHeigth = heigth;
+
+    updateRatio();
+};

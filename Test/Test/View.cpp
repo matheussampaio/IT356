@@ -257,6 +257,8 @@ void View::setVertexIndex(vector<GLuint> vertexIndex) {
 }
 
 void View::setVertexData(vector<VertexAttribs> vertexData) {
+    std::cout << "Updating vertex data" << std::endl;
+
     mVertexData = vertexData;
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo[ArrayBuffer]);
