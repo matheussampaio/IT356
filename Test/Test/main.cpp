@@ -171,6 +171,8 @@ void drawSquare()
     v.setXYZW(mLeftBtnCurrentX, -mLeftBtnStartY, 0, 1);
     squareVertex.push_back(v);
 
+    printf("%d,%d -> %d,%d\n", mLeftBtnStartX, -mLeftBtnStartY, mLeftBtnCurrentX, -mLeftBtnCurrentY);
+
     v.setXYZW(mLeftBtnCurrentX, -mLeftBtnCurrentY, 0, 1);
     squareVertex.push_back(v);
 
@@ -180,6 +182,7 @@ void drawSquare()
     mViewSquare.setVertexData(squareVertex);
 
     mViewSquare.draw();
+
 }
 
 void updateMaze()

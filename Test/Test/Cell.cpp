@@ -11,19 +11,18 @@ Cell::Cell(int index, int x, int y, std::bitset<4> walls, int ratioHeigth, int r
     mRatioHeigth = ratioHeigth;
     mRatioWidth = ratioWidth;
 
-    /* FIXME: Y-axis are reversed, but this should be transform work. */
 
     // left - top : x, y
-    mVertex[0].setXYZW(mX * mRatioWidth, -mY * mRatioHeigth, 0, 1);
+    mVertex[0].setXYZW(mX * mRatioWidth, mY * mRatioHeigth, 0, 1);
 
     // right - top : x + 1, y
-    mVertex[1].setXYZW((mX + 1) * mRatioWidth, -mY * mRatioHeigth, 0, 1);
+    mVertex[1].setXYZW((mX + 1) * mRatioWidth, mY * mRatioHeigth, 0, 1);
 
     // right - bottom : x + 1, y + 1
-    mVertex[2].setXYZW((mX + 1) * mRatioWidth, -(mY + 1) * mRatioHeigth, 0, 1);
+    mVertex[2].setXYZW((mX + 1) * mRatioWidth, (mY + 1) * mRatioHeigth, 0, 1);
 
     // left - bottom : x, y + 1
-    mVertex[3].setXYZW(mX * mRatioWidth, -(mY + 1) * mRatioHeigth, 0, 1);
+    mVertex[3].setXYZW(mX * mRatioWidth, (mY + 1) * mRatioHeigth, 0, 1);
 }
 
 bool Cell::update(int x1, int y1, int x2, int y2)
@@ -89,10 +88,10 @@ bool Cell::wallIsEqual(int begin, int end, int x1, int y1, int x2, int y2)
     GLfloat vX1, vY1, vX2, vY2;
 
     vX1 = mVertex[begin].getX();
-    vY1 = -mVertex[begin].getY();
+    vY1 = mVertex[begin].getY();
 
     vX2 = mVertex[end].getX();
-    vY2 = -mVertex[end].getY();
+    vY2 = mVertex[end].getY();
 
     bool wallIn = Utils::isPointEqual(x1, y1, vX1, vY1) && Utils::isPointEqual(x2, y2, vX2, vY2);
     bool wallBack = Utils::isPointEqual(x1, y1, vX2, vY2) && Utils::isPointEqual(x2, y2, vX1, vY1);
@@ -143,15 +142,12 @@ void Cell::appendVertexIndex(std::vector<GLuint> *vertexIndex) {
 
 void Cell::appendVertexData(std::vector<VertexAttribs> *vertexData)
 {
-    // left - top : x, y
-    vertexData->push_back(mVertex[0]);
+    VertexAttribs v;
 
-    // right - top : x + 1, y
-    vertexData->push_back(mVertex[1]);
-
-    // right - bottom : x + 1, y + 1
-    vertexData->push_back(mVertex[2]);
-
-    // left - bottom : x, y + 1
-    vertexData->push_back(mVertex[3]);
+    for (int i = 0; i < 4; i++)
+    {
+        /* FIXME: Y-axis are reversed, but this should be transform work. */
+        v.setXYZW(mVertex[i].getX() + 10, -0.1f * mVertex[i].getY() - 10, 0, 1);
+        vertexData->push_back(v);
+    }
 };

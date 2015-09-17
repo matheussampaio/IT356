@@ -27,7 +27,7 @@ void View::resize(int w, int h)
     /*
     *This program uses orthographic projection. The corresponding matrix for this projection is provided by the glm function below.
     */
-    proj = glm::ortho(-10.0f, WINDOW_WIDTH - 10.0f, -WINDOW_HEIGHT * 1.0f, 10.0f);
+    proj = glm::ortho(0.0f, WINDOW_WIDTH * 1.0f, WINDOW_HEIGHT * -1.0f, 0.0f); 
 }
 
 void View::initialize()
