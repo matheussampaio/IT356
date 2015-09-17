@@ -147,7 +147,7 @@ void Cell::appendVertexData(std::vector<VertexAttribs> *vertexData)
     for (int i = 0; i < 4; i++)
     {
         /* FIXME: Y-axis are reversed, but this should be transform work. */
-        v.setXYZW(mVertex[i].getX() + 10, -0.1f * mVertex[i].getY() - 10, 0, 1);
+        v.setXYZW(mVertex[i].getX() + 10, -1.0f * mVertex[i].getY() - 10, 0, 1);
         vertexData->push_back(v);
     }
 };
