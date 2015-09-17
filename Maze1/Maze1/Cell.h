@@ -18,6 +18,7 @@ class Cell
 {
     /* Bits representing the walls*/
     std::bitset<4> mWalls;
+    bool mWallsUnblocked[4];
 
     /* Base Coordinates of the Cells */
     float mX, mY;
@@ -38,6 +39,8 @@ public:
 
     void appendVertexIndex(std::vector<GLuint> *vertexIndex);
     void appendVertexData(std::vector<VertexAttribs> *vertexData, float ratioWidth, float ratioHeigth, float padding);
+
+    void blockWall(int wall);
 
     float getX() { return mX; };
     float getY() { return mY; };

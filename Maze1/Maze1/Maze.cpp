@@ -58,6 +58,8 @@ void Maze::loadMaze()
             mCells.push_back(Cell((y * mColumns + x) * 4, x, y, std::bitset<4>(tempBitset)));
         }
     }
+
+    blockBoardWalls();
 }
 
 void Maze::randomizeSide(int* wallX, int* wallY, int currentX, int currentY, int minX, int minY, int maxX, int maxY)
@@ -307,3 +309,29 @@ void Maze::resize(float width, float heigth)
 
     updateRatio();
 };
+
+void Maze::blockBoardWalls()
+{
+    for (int i = 0; i < mCells.size(); i++)
+    {
+        if (mCells[i].getX() == 0)
+        {
+            mCells[i].blockWall(3);
+        }
+
+        if (mCells[i].getY() == 0)
+        {
+            mCells[i].blockWall(2);
+        }
+
+        if (mCells[i].getX() == mColumns - 1)
+        {
+            mCells[i].blockWall(1);
+        }
+
+        if (mCells[i].getY() == mRows - 1)
+        {
+            mCells[i].blockWall(0);
+        }
+    }
+}

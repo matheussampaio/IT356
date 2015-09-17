@@ -94,6 +94,8 @@ void View::draw()
 {
     glUseProgram(program);
 
+    modelView = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+
     glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(proj));
     glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, glm::value_ptr(modelView));
 

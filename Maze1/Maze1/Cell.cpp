@@ -7,7 +7,7 @@ Cell::Cell(int index, float x, float y, std::bitset<4> walls)
     mY = y;
     mWalls = walls;
     mLeftTopIndex = index;
-
+    
     // left - top : x, y
     mVertex[0].setXYZW(mX , mY, 0, 1);
 
@@ -32,11 +32,23 @@ bool Cell::update(float x1, float y1, float x2, float y2)
     /* if any vertex are inside of the square */
     if (leftTopVertexInside || leftBottomVertexInside || rightTopVertexInside || rightBottomVertexInside)
     {
-        /* if at least one vertex of the wall is inside of the square,remove THAT wall, otherwise, ADD that wall. */
-        mWalls[3] = !(leftTopVertexInside || leftBottomVertexInside);
-        mWalls[2] = !(rightTopVertexInside || leftTopVertexInside);
-        mWalls[1] = !(rightTopVertexInside || rightBottomVertexInside);
-        mWalls[0] = !(leftBottomVertexInside || rightBottomVertexInside);
+        /* if at least one vertex of the wall is inside of the square, remove THAT wall, otherwise, ADD that wall. */
+        if (mWallsUnblocked[3]) {
+            mWalls[3] = !(leftTopVertexInside || leftBottomVertexInside);
+        }
+
+        if (mWallsUnblocked[2]) {
+            mWalls[2] = !(rightTopVertexInside || leftTopVertexInside);
+        }
+        
+        if (mWallsUnblocked[1]) {
+
+            mWalls[1] = !(rightTopVertexInside || rightBottomVertexInside);
+        }
+
+        if (mWallsUnblocked[0]) {
+            mWalls[0] = !(leftBottomVertexInside || rightBottomVertexInside);
+        }
 
         return true;
     }
@@ -142,3 +154,10 @@ void Cell::appendVertexData(std::vector<VertexAttribs> *vertexData, float ratio,
         vertexData->push_back(v);
     }
 };
+
+void Cell::blockWall(int wall)
+{
+    std::printf("blocking wall: %d on (%.0f, %.0f)\n", wall, mX, mY);
+
+    mWallsUnblocked[wall] = false;
+}

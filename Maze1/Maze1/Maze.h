@@ -55,6 +55,8 @@ class Maze : public sf::Drawable, public sf::Transformable
 
     bool isUpdateValid(float x1, float y1, float x2, float y2);
 
+    void blockBoardWalls();
+
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
 
