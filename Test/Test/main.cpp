@@ -41,8 +41,7 @@ sf::RectangleShape mSquare;
 
 /* Our Main View */
 View mView;
-
-int t = 0;
+View mViewSquare;
 
 int main(int argc, char *argv[])
 {
@@ -168,24 +167,26 @@ void processMouseMoved(sf::Event event)
 
 void drawSquare(sf::RenderWindow *window)
 {
-    sf::VertexArray lines(sf::LinesStrip, 5);
+    std::vector<VertexAttribs> squareVertex;
+    VertexAttribs v;
 
-    lines[0].position = sf::Vector2f(mLeftBtnStartX, mLeftBtnStartY);
-    lines[0].color = sf::Color::Red;
+    v.setColor(1, 0, 0);
 
-    lines[1].position = sf::Vector2f(mLeftBtnCurrentX, mLeftBtnStartY);
-    lines[1].color = sf::Color::Red;
+    v.setXYZW(mLeftBtnStartX, -mLeftBtnStartY, 0, 1);
+    squareVertex.push_back(v);
 
-    lines[2].position = sf::Vector2f(mLeftBtnCurrentX, mLeftBtnCurrentY);
-    lines[2].color = sf::Color::Red;
+    v.setXYZW(mLeftBtnCurrentX, -mLeftBtnStartY, 0, 1);
+    squareVertex.push_back(v);
 
-    lines[3].position = sf::Vector2f(mLeftBtnStartX, mLeftBtnCurrentY);
-    lines[3].color = sf::Color::Red;
+    v.setXYZW(mLeftBtnCurrentX, -mLeftBtnCurrentY, 0, 1);
+    squareVertex.push_back(v);
 
-    lines[4].position = sf::Vector2f(mLeftBtnStartX, mLeftBtnStartY);
-    lines[4].color = sf::Color::Red;
+    v.setXYZW(mLeftBtnStartX, -mLeftBtnCurrentY, 0, 1);
+    squareVertex.push_back(v);
 
-    window->draw(lines);
+    mViewSquare.setVertexData(squareVertex);
+
+    mViewSquare.draw();
 }
 
 void updateMaze()
@@ -207,10 +208,25 @@ void resize(int w, int h)
 {
     //delegate to our view class.
     mView.resize(w, h);
+    mViewSquare.resize(w, h);
 
     //sets the viewport to cover the entire area of the resized window
     //glViewport(leftx,topy,width,height)
     glViewport(0, 0, w, h);
+}
+
+void initSquare() {
+    mViewSquare.initialize();
+
+    std::vector<GLuint> squareIndex;
+
+    for (int i = 0; i < 4; i++)
+    {
+        squareIndex.push_back(i);
+        squareIndex.push_back((i + 1) % 4);
+    }
+
+    mViewSquare.setVertexIndex(squareIndex);
 }
 
 void init(sf::RenderWindow *window)
@@ -228,4 +244,6 @@ void init(sf::RenderWindow *window)
 
     mView.setVertexData(mMaze.getVertexData());
     mView.setVertexIndex(mMaze.getVertexIndex());
+
+    initSquare();
 }
