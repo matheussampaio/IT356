@@ -248,6 +248,8 @@ void View::getGLSLVersion(int *major, int *minor)
 }
 
 void View::setVertexIndex(vector<GLuint> vertexIndex) {
+    std::cout << "Updating vertex index" << std::endl;
+
     mVertexIndex = vertexIndex;
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[IndexBuffer]);

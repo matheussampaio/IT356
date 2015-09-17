@@ -18,7 +18,7 @@ void processEvent(sf::Event event, sf::RenderWindow &window);
 void processLeftMousePressed(sf::Event event);
 void processLeftMouseReleased(sf::Event event);
 void processMouseMoved(sf::Event event);
-void drawSquare(sf::RenderWindow *window);
+void drawSquare();
 void updateMaze();
 
 /* Maze Instance */
@@ -45,7 +45,6 @@ View mViewSquare;
 
 int main(int argc, char *argv[])
 {
-
     sf::ContextSettings contextSettings;
     contextSettings.depthBits = 32;
     contextSettings.majorVersion = 4;
@@ -76,12 +75,6 @@ int main(int argc, char *argv[])
             processEvent(event, window);
         }
 
-        // clear the buffers
-        //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // draw...
-
-        // end the current frame (internally swaps the front and back buffers)
         display(&window);
     }
 
@@ -95,7 +88,7 @@ void display(sf::RenderWindow *window) {
 
     if (mLeftBtnMousePressed)
     {
-        drawSquare(window);
+        drawSquare();
     }
     
     // end the current frame
@@ -165,7 +158,7 @@ void processMouseMoved(sf::Event event)
     }
 }
 
-void drawSquare(sf::RenderWindow *window)
+void drawSquare()
 {
     std::vector<VertexAttribs> squareVertex;
     VertexAttribs v;
@@ -201,6 +194,7 @@ void updateMaze()
     if (isUpdated)
     {
         mView.setVertexIndex(mMaze.getVertexIndex());
+        mView.setVertexData(mMaze.getVertexData());
     }
 }
 
@@ -237,8 +231,6 @@ void init(sf::RenderWindow *window)
     window->setFramerateLimit(30);
 
     glClearColor(1, 1, 1, 0); // set clear code to white
-
-    mMaze.setPosition(10, 10);
 
     mView.initialize();
 

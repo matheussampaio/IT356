@@ -59,20 +59,47 @@ void Cell::removeWall(int x1, int y1, int x2, int y2)
     y1 *= mRatioHeigth;
     y2 *= mRatioHeigth;
 
-    for (int i = 0; i <= 3; i++)
+    /* TOP */
+    if (wallIsEqual(0, 1, x1, y1, x2, y2))
     {
-        vX1 = mVertex[i].getX();
-        vY1 = mVertex[i].getY();
+        mWalls[2] = 0;
 
-        vX2 = mVertex[(i + 1) % 3].getX();
-        vY2 = mVertex[(i + 1) % 3].getY();
+    /* LEFT */
+    }
+    else if (wallIsEqual(1, 2, x1, y1, x2, y2))
+    {
+        mWalls[1] = 0;
 
-        if ((Utils::isPointEqual(x1, y1, vX1, vY1) && Utils::isPointEqual(x2, y2, vX2, vY2)) || (Utils::isPointEqual(x1, y1, vX2, vY2) && Utils::isPointEqual(x2, y2, vX1, vY1)))
-        {
-            mWalls[3 - i] = 0;
-        }
+    /* BOTTOM */
+    }
+    else if (wallIsEqual(2, 3, x1, y1, x2, y2))
+    {
+        mWalls[0] = 0;
+
+    /* LEFT */
+    }
+    else if (wallIsEqual(3, 0, x1, y1, x2, y2))
+    {
+        mWalls[3] = 0;
     }
 }
+
+bool Cell::wallIsEqual(int begin, int end, int x1, int y1, int x2, int y2)
+{
+    GLfloat vX1, vY1, vX2, vY2;
+
+    vX1 = mVertex[begin].getX();
+    vY1 = -mVertex[begin].getY();
+
+    vX2 = mVertex[end].getX();
+    vY2 = -mVertex[end].getY();
+
+    bool wallIn = Utils::isPointEqual(x1, y1, vX1, vY1) && Utils::isPointEqual(x2, y2, vX2, vY2);
+    bool wallBack = Utils::isPointEqual(x1, y1, vX2, vY2) && Utils::isPointEqual(x2, y2, vX1, vY1);
+
+    return wallIn || wallBack;
+}
+
 
 void Cell::appendVertexIndex(std::vector<GLuint> *vertexIndex) {
 

@@ -37,6 +37,7 @@ public:
     bool update(int x1, int y1, int x2, int y2);
 
     void removeWall(int x1, int y1, int x2, int y2);
+    bool wallIsEqual(int begin, int end, int x1, int y1, int x2, int y2);
 
     void appendVertexIndex(std::vector<GLuint> *vertexIndex);
 
