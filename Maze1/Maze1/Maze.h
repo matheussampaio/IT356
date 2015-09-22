@@ -26,8 +26,7 @@ class Maze : public sf::Drawable, public sf::Transformable
     float mPaddingX, mPaddingY;
 
     /* Ratio constant */
-    int mRatio;
-    float MAX_SIZE = 0.98f;
+    float mRatio, MAX_SIZE = 0.98f;
 
     /* Filename */
     std::string mFilename;

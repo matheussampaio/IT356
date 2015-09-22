@@ -22,7 +22,7 @@ void drawSquare();
 void updateMaze();
 
 
-string FILENAME_INPUT = "maze-20x20.txt";
+string FILENAME_INPUT = "maze-500x500.txt";
 string FILENAME_OUTPUT = "maze-edited.txt";
 
 int INIT_WIDTH = 800, INIT_HEIGHT = 800;
