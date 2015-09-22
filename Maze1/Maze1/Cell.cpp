@@ -157,7 +157,5 @@ void Cell::appendVertexData(std::vector<VertexAttribs> *vertexData, float ratio,
 
 void Cell::blockWall(int wall)
 {
-    std::printf("blocking wall: %d on (%.0f, %.0f)\n", wall, mX, mY);
-
     mWallsUnblocked[wall] = false;
 }
