@@ -1,0 +1,18 @@
+<scene>
+	<group>
+		<transform>
+			<set>			
+				<translate> -50 0 0 </translate>
+			</set>
+			<group name="Y" from="humanoid-Y.xml">
+			</group>
+		</transform>
+		<transform>
+			<set>			
+				<translate> 50 0 0 </translate>
+			</set>
+			<group name="M" from="humanoid-M.xml">
+			</group>
+		</transform>
+	</group>
+</scene>
