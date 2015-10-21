@@ -24,7 +24,7 @@ class Cell
     float mX, mY;
     int mLeftTopIndex;
 
-    VertexAttribs mVertex[4];
+    MyVertexAttribs mVertex[4];
 
     bool wallIsEqual(int begin, int end, float x1, float y1, float x2, float y2);
 
@@ -38,7 +38,7 @@ public:
     void removeWall(float x1, float y1, float x2, float y2);
 
     void appendVertexIndex(std::vector<GLuint> *vertexIndex);
-    void appendVertexData(std::vector<VertexAttribs> *vertexData, float ratioWidth, float ratioHeigth, float padding);
+    void appendVertexData(std::vector<MyVertexAttribs> *vertexData, float ratioWidth, float ratioHeigth, float padding);
 
     void blockWall(int wall);
 

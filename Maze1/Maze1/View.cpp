@@ -68,17 +68,17 @@ void View::initialize()
     glGenBuffers(NumBuffers, vbo);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo[ArrayBuffer]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(VertexAttribs)*mVertexData.size(), NULL, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(MyVertexAttribs)*mVertexData.size(), NULL, GL_DYNAMIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[IndexBuffer]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint)*mVertexIndex.size(), NULL, GL_DYNAMIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo[ArrayBuffer]);
 
-    glVertexAttribPointer(vPositionLocation, 4, GL_FLOAT, GL_FALSE, sizeof(VertexAttribs), BUFFER_OFFSET(0));
+    glVertexAttribPointer(vPositionLocation, 4, GL_FLOAT, GL_FALSE, sizeof(MyVertexAttribs), BUFFER_OFFSET(0));
     glEnableVertexAttribArray(vPositionLocation);
 
-    glVertexAttribPointer(vColorLocation, 3, GL_FLOAT, GL_FALSE, sizeof(VertexAttribs), BUFFER_OFFSET(4 * sizeof(GLfloat)));
+    glVertexAttribPointer(vColorLocation, 3, GL_FLOAT, GL_FALSE, sizeof(MyVertexAttribs), BUFFER_OFFSET(4 * sizeof(GLfloat)));
     glEnableVertexAttribArray(vColorLocation);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -258,11 +258,11 @@ void View::setVertexIndex(vector<GLuint> vertexIndex) {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * mVertexIndex.size(), &mVertexIndex[0], GL_DYNAMIC_DRAW);
 }
 
-void View::setVertexData(vector<VertexAttribs> vertexData) {
+void View::setVertexData(vector<MyVertexAttribs> vertexData) {
     std::cout << "Updating vertex data" << std::endl;
 
     mVertexData = vertexData;
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo[ArrayBuffer]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(VertexAttribs) * mVertexData.size(), &mVertexData[0], GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(MyVertexAttribs) * mVertexData.size(), &mVertexData[0], GL_DYNAMIC_DRAW);
 }

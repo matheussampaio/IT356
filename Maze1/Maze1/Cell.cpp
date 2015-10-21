@@ -143,9 +143,9 @@ void Cell::appendVertexIndex(std::vector<GLuint> *vertexIndex) {
     }
 };
 
-void Cell::appendVertexData(std::vector<VertexAttribs> *vertexData, float ratio, float paddingX, float paddingY)
+void Cell::appendVertexData(std::vector<MyVertexAttribs> *vertexData, float ratio, float paddingX, float paddingY)
 {
-    VertexAttribs v;
+    MyVertexAttribs v;
 
     for (int i = 0; i < 4; i++)
     {

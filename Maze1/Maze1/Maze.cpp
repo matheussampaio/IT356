@@ -278,9 +278,9 @@ bool Maze::isUpdateValid(float x1, float y1, float x2, float y2)
     return true;
 }
 
-std::vector<VertexAttribs> Maze::getVertexData()
+std::vector<MyVertexAttribs> Maze::getVertexData()
 {
-    std::vector<VertexAttribs> vertexdata;
+    std::vector<MyVertexAttribs> vertexdata;
 
     for (int i = 0; i < mCells.size(); i++)
     {

@@ -38,7 +38,7 @@ class Maze : public sf::Drawable, public sf::Transformable
     std::vector<Cell> mCells;
 
     std::vector<GLuint> mVertexIndex;
-    std::vector<VertexAttribs> mVertexData;
+    std::vector<MyVertexAttribs> mVertexData;
 
     bool isBoardWall(int x1, int y1, int x2, int y2);
 
@@ -73,7 +73,7 @@ public:
     /* ACESSORS */
 
     std::vector<GLuint> getVertexIndex();
-    std::vector<VertexAttribs> getVertexData();
+    std::vector<MyVertexAttribs> getVertexData();
 
     int getRows() { return mRows; };
     int getColumns() { return mColumns; };

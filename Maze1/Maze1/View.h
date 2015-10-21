@@ -62,9 +62,9 @@ public:
     void getGLSLVersion(int *major, int *minor);
 
     void setVertexIndex(vector<GLuint> vertexIndex);
-    void setVertexData(vector<VertexAttribs> vertexData);
+    void setVertexData(vector<MyVertexAttribs> vertexData);
 
-    vector<VertexAttribs> mVertexData;
+    vector<MyVertexAttribs> mVertexData;
     vector<GLuint> mVertexIndex;
 
 protected:

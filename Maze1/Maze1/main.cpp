@@ -22,7 +22,7 @@ void drawSquare();
 void updateMaze();
 
 
-string FILENAME_INPUT = "maze-500x500.txt";
+string FILENAME_INPUT = "maze-20x20.txt";
 string FILENAME_OUTPUT = "maze-edited.txt";
 
 int INIT_WIDTH = 800, INIT_HEIGHT = 800;
@@ -178,8 +178,8 @@ void processMouseMoved(sf::Event event)
 
 void drawSquare()
 {
-    std::vector<VertexAttribs> squareVertex;
-    VertexAttribs v;
+    std::vector<MyVertexAttribs> squareVertex;
+    MyVertexAttribs v;
 
     v.setColor(1, 0, 0);
 

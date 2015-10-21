@@ -1,7 +1,7 @@
 #ifndef VECTOR_ATTRIBS_H
 #define VECTOR_ATTRIBS_H
 
-class VertexAttribs
+class MyVertexAttribs
 {
     float mPosition[4]; //x,y,z,w
     float mColor[3]; //color as r,g,b
