@@ -15,7 +15,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Maze.cpp" />
     <ClCompile Include="Utils.cpp" />
-    <ClCompile Include="View.cpp" />
+    <ClCompile Include="ViewMaze.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="default.frag" />
@@ -31,7 +31,7 @@
     <ClInclude Include="Maze.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="VertexAttribs.h" />
-    <ClInclude Include="View.h" />
+    <ClInclude Include="ViewMaze.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\background.jpg" />

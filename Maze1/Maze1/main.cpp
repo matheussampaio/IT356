@@ -5,7 +5,7 @@
 #include <GL/glew.h>
 #include <SFML/OpenGL.hpp>
 
-#include "View.h"
+#include "ViewMaze.h"
 #include "Maze.h"
 
 using namespace std;
@@ -43,8 +43,8 @@ int mLeftBtnStartX, mLeftBtnStartY, mLeftBtnCurrentX, mLeftBtnCurrentY;
 sf::RectangleShape mSquare;
 
 /* Our Main View */
-View mView;
-View mViewSquare;
+ViewMaze mView;
+ViewMaze mViewSquare;
 
 /* Define is data and index should update */
 bool mDataOutdated = true, mIndexOutdated = true;

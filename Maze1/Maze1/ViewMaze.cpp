@@ -1,4 +1,4 @@
-#include "View.h"
+#include "ViewMaze.h"
 #include <GL/glew.h>
 
 #include <cstdlib>
@@ -14,12 +14,12 @@ using namespace std;
 //see value_ptr function below for an example
 #include <glm/gtc/type_ptr.hpp>
 
-View::View()
+ViewMaze::ViewMaze()
     :NumVertices(6)
 {
 }
 
-void View::resize(int w, int h)
+void ViewMaze::resize(int w, int h)
 {
     WINDOW_WIDTH = w;
     WINDOW_HEIGHT = h;
@@ -30,7 +30,7 @@ void View::resize(int w, int h)
     proj = glm::ortho(0.0f, WINDOW_WIDTH * 1.0f, WINDOW_HEIGHT * -1.0f, 0.0f); 
 }
 
-void View::initialize()
+void ViewMaze::initialize()
 {
     //populate our shader information. The two files below are present in this project.
     ShaderInfo shaders[] =
@@ -90,7 +90,7 @@ void View::initialize()
 *Function called from display in main. Should contain or call all the code to draw one screen from scratch
 *entirely.
 */
-void View::draw()
+void ViewMaze::draw()
 {
     glUseProgram(program);
 
@@ -117,7 +117,7 @@ void View::draw()
 *
 *This function is standard and should not change from one program to the next.
 */
-GLuint View::createShaders(ShaderInfo *shaders)
+GLuint ViewMaze::createShaders(ShaderInfo *shaders)
 {
     ifstream file;
     GLuint shaderProgram;
@@ -189,7 +189,7 @@ GLuint View::createShaders(ShaderInfo *shaders)
     return shaderProgram;
 }
 
-void View::printShaderInfoLog(GLuint shader)
+void ViewMaze::printShaderInfoLog(GLuint shader)
 {
     int infologLen = 0;
     int charsWritten = 0;
@@ -211,7 +211,7 @@ void View::printShaderInfoLog(GLuint shader)
     //	printOpenGLError();
 }
 
-void View::getOpenGLVersion(int *major, int *minor)
+void ViewMaze::getOpenGLVersion(int *major, int *minor)
 {
     const char *verstr = (const char *)glGetString(GL_VERSION);
     if ((verstr == NULL) || (sscanf_s(verstr, "%d.%d", major, minor) != 2))
@@ -220,7 +220,7 @@ void View::getOpenGLVersion(int *major, int *minor)
     }
 }
 
-void View::getGLSLVersion(int *major, int *minor)
+void ViewMaze::getGLSLVersion(int *major, int *minor)
 {
     int gl_major, gl_minor;
 
@@ -249,7 +249,7 @@ void View::getGLSLVersion(int *major, int *minor)
     }
 }
 
-void View::setVertexIndex(vector<GLuint> vertexIndex) {
+void ViewMaze::setVertexIndex(vector<GLuint> vertexIndex) {
     std::cout << "Updating vertex index" << std::endl;
 
     mVertexIndex = vertexIndex;
@@ -258,7 +258,7 @@ void View::setVertexIndex(vector<GLuint> vertexIndex) {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * mVertexIndex.size(), &mVertexIndex[0], GL_DYNAMIC_DRAW);
 }
 
-void View::setVertexData(vector<MyVertexAttribs> vertexData) {
+void ViewMaze::setVertexData(vector<MyVertexAttribs> vertexData) {
     std::cout << "Updating vertex data" << std::endl;
 
     mVertexData = vertexData;
