@@ -238,6 +238,36 @@ bool Maze::update(float x1, float y1, float x2, float y2)
         {
             if (mCells[i].update(x1, y1, x2, y2))
             {
+                
+                // if bottom wall
+                if (mCells[i].getWalls()[0] == 1 && i + mColumns < mCells.size())
+                {
+                    // add top wall to the bottom neighboard
+                    mCells[i + mColumns].setWall(2, true);
+                }
+
+                // if right wall
+                if (mCells[i].getWalls()[1] == 1)
+                {
+                    // add left wall to the right neighboard
+                    mCells[i + 1].setWall(3, true);
+                }
+
+                // if top wall
+                if (mCells[i].getWalls()[2] == 1 && i >= mColumns)
+                {
+                    // add bottom wall to the top neighboard
+                    mCells[i - mColumns].setWall(0, true);
+                }
+
+                // if left wall
+                if (mCells[i].getWalls()[3] == 1)
+                {
+                    // add right wall to the left neighboard
+                    mCells[i - 1].setWall(1, true);
+                }
+                
+
                 updatedCellsIndex.push_back(i);
             }
         }

@@ -143,7 +143,7 @@ void Cell::appendVertexIndex(std::vector<GLuint> *vertexIndex) {
     }
 };
 
-void Cell::appendVertexData(std::vector<MyVertexAttribs> *vertexData, float ratio, float paddingX, float paddingY)
+void Cell::appendVertexData(std::vector<MyVertexAttribs> *vertexData, float ratio, float paddingX, float paddingY) 
 {
     MyVertexAttribs v;
 

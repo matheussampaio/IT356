@@ -45,6 +45,9 @@ public:
     float getX() { return mX; };
     float getY() { return mY; };
 
+    std::bitset<4> getWalls() { return mWalls; };
+    void setWall(int index, bool wall) { mWalls[index] = wall; };
+
     int getWallsInInt() { return Utils::bitsetToInt(mWalls); };
 
 };

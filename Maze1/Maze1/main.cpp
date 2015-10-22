@@ -22,7 +22,7 @@ void drawSquare();
 void updateMaze();
 
 
-string FILENAME_INPUT = "maze-20x20.txt";
+string FILENAME_INPUT = "maze-50x50.txt";
 string FILENAME_OUTPUT = "maze-edited.txt";
 
 int INIT_WIDTH = 800, INIT_HEIGHT = 800;
@@ -165,6 +165,7 @@ void processLeftMouseReleased(sf::Event event)
     mLeftBtnMousePressed = false;
 
     updateMaze();
+    mMaze.save(FILENAME_OUTPUT);
 }
 
 void processMouseMoved(sf::Event event)
