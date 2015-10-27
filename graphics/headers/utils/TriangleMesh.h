@@ -13,6 +13,8 @@ public:
 	glm::vec4 position;
 	glm::vec4 normal;
 	glm::vec3 texcoords;
+	//the tangent at the point, in object coordinates
+    glm::vec4 tangent;
 };
 
 
@@ -154,6 +156,68 @@ public:
 				vertex_data[i].normal = glm::normalize(vertex_data[i].normal);
 		}
 	}
+
+	void computeTangents()
+    {
+        int i,j;
+
+        for (i=0;i<vertex_data.size();i++)
+        {
+            for (j=0;j<4;j++)
+                vertex_data[i].tangent[j] = 0.0f;
+        }
+
+        //go through all the triangles
+        for (i=0;i<triangles.size();i+=3)
+        {
+            int i0,i1,i2;
+
+            i0 = triangles[i];
+            i1 = triangles[i+1];
+            i2 = triangles[i+2];
+
+            glm::vec3 v0 = glm::vec3(vertex_data[i0].position[0],vertex_data[i0].position[1],vertex_data[i0].position[2]);
+            glm::vec3 v1 = glm::vec3(vertex_data[i1].position[0],vertex_data[i1].position[1],vertex_data[i1].position[2]);
+            glm::vec3 v2 = glm::vec3(vertex_data[i2].position[0],vertex_data[i2].position[1],vertex_data[i2].position[2]);
+
+            // Shortcuts for UVs
+            glm::vec2 uv0 = glm::vec2(vertex_data[i0].texcoords[0],vertex_data[i0].texcoords[1]);
+            glm::vec2 uv1 = glm::vec2(vertex_data[i1].texcoords[0],vertex_data[i1].texcoords[1]);
+            glm::vec2 uv2 = glm::vec2(vertex_data[i2].texcoords[0],vertex_data[i2].texcoords[1]);
+
+            // Edges of the triangle : postion delta
+            glm::vec3 deltaPos1 = v1-v0;
+            glm::vec3 deltaPos2 = v2-v0;
+
+            // UV delta
+            glm::vec2 deltaUV1 = uv1-uv0;
+            glm::vec2 deltaUV2 = uv2-uv0;
+
+            float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
+            glm::vec3 tangent = (deltaPos1 * deltaUV2.y   - deltaPos2 * deltaUV1.y)*r;
+
+            for (j=0;j<3;j++)
+            {
+                vertex_data[triangles[i+j]].tangent[0] += tangent.x;
+                vertex_data[triangles[i+j]].tangent[1] += tangent.y;
+                vertex_data[triangles[i+j]].tangent[2] += tangent.z;
+            }
+        }
+
+        for (i=0;i<vertex_data.size();i++)
+        {
+            glm::vec3 t = glm::vec3(vertex_data[i].tangent[0],vertex_data[i].tangent[1],vertex_data[i].tangent[2]);
+            t = glm::normalize(t);
+            glm::vec3 n = glm::vec3(vertex_data[i].normal[0],vertex_data[i].normal[1],vertex_data[i].normal[2]);
+
+            glm::vec3 b = glm::cross(n,t);
+            t = glm::cross(b,n);
+
+            t = glm::normalize(t);
+
+            vertex_data[i].tangent = glm::vec4(t.x,t.y,t.z,1.0f);            
+        }
+    }
 	
 protected:
 	vector<VertexAttribs> vertex_data;

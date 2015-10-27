@@ -1,9 +1,12 @@
 #ifndef _TRACKBALL_H_
 #define _TRACKBALL_H_
 
+#define GLM_FORCE_RADIANS
 #include "../glm/glm.hpp"
 #include "../glm/gtc/matrix_transform.hpp"
 #include <cmath>
+#include <iostream>
+
 namespace graphics
 {
 	class Trackball
@@ -41,9 +44,10 @@ namespace graphics
 		inline void change(int dx,int dy)
 		{
 			float dist = sqrt((float)dx*dx + (float)dy*dy);
-			float angle = 180.0f*(dist/radius)/3.14159f;
+			float angle = dist/radius;
 			glm::vec3 axis((float)-dy,(float)dx,0.0f);
 
+			
 			transform = glm::translate(glm::mat4(1.0f),center) * glm::rotate(glm::mat4(1.0),angle,axis) * glm::translate(glm::mat4(1.0f),-center) * transform;
 
 

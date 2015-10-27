@@ -262,7 +262,7 @@ public:
 		{
 			VertexAttribs vat;
 			vat.position = glm::vec4(vertices[i],1.0f);
-			if (normals.size()>0)
+			if (normals.size()==vertices.size())
 				vat.normal = glm::vec4(normals[i],0.0f);
 			else
 				vat.normal = glm::vec4(0.0f,0.0f,0.0f,0.0f);
@@ -279,7 +279,7 @@ public:
 		mesh.initTriangleTextureIndices(triangle_texture_indices);
 		mesh.initTriangleNormalIndices(triangle_normal_indices);
 
-		if (normals.size()<=0)
+		if (normals.size()!=vertices.size())
 		{
 			mesh.computeNormals();
 		}

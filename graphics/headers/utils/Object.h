@@ -51,6 +51,9 @@ namespace graphics
 		//the transformation associated with this object
 		glm::mat4 transform;
 
+		//texture transform
+		glm::mat4 textureTransform;
+
 		//a unique "name" for this object
 		string name;
 
@@ -205,6 +208,16 @@ namespace graphics
 		glm::mat4 getTransform()
 		{
 			return transform;
+		}
+
+		void setTextureTransform(glm::mat4& obj)
+		{
+			textureTransform = obj;
+		}
+
+		glm::mat4 getTextureTransform()
+		{
+			return textureTransform;
 		}
 
 		/*
